@@ -5,14 +5,17 @@
  * Author : Mark
  */ 
 
-#include <avr/io.h>
+#include "Project_header_file.h"
 
 
 int main(void)
 {
-    /* Replace with your application code */
-    while (1) 
-    {
-    }
+    setup_328_HW;
+	
+	User_prompt;
+	
+	sendString("\r\nUPDI development program");
+	
+	while(1);
 }
 
