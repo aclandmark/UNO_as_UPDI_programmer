@@ -17,10 +17,15 @@ void Clock_period(void){for(int p = 0; p<= 3; p++){asm("nop");}}
 #define PGClock_L 
 #define PGClock_H Clock_period();
 
-
+//16MHz clock
 #define T0_delay_200us 3, 206
 #define T0_delay_500us 3, 131
 #define T0_delay_1ms 4,194
+
+
+
+
+//8MHz clock
 #define T0_delay_10ms 5,183
 #define T0_delay_5ms 5,220
 #define T0_delay_2ms 4,195
