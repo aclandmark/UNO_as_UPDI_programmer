@@ -18,6 +18,12 @@ void Clock_period(void){for(int p = 0; p<= 3; p++){asm("nop");}}
 #define PGClock_H Clock_period();
 
 //16MHz clock
+#define T0_delay_5us	1,176
+#define T0_delay_10us  1, 96
+
+#define T0_delay_40us  3, 246
+
+#define T0_delay_100us	3,231
 #define T0_delay_200us 3, 206
 #define T0_delay_500us 3, 131
 #define T0_delay_1ms 4,194
@@ -250,10 +256,10 @@ DDRB = 0;\
 DDRC = 0;\
 DDRD = 0;\
 PORTB = 0xFF;\
-PORTC = 0xFF;\
-PORTD = 0xFF;\
+PORTC = 0xFE;\
+PORTD = 0xFF;
 
-
+//PORTC0 stays as Hi Z inputput
 #define Config_Xtal_port \
 ASSR = (1 << AS2);	
 
