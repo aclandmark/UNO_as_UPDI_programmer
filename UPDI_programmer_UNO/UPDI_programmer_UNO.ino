@@ -6,79 +6,94 @@
 
 #include "Project_header_file.h"
 
-#define delay_of_0_25uS      asm("nop"); asm("nop"); asm("nop"); asm("nop");
-#define delay_of_0_75uS     delay_of_0_25uS; delay_of_0_25uS; delay_of_0_25uS;
-#define out_h         PORTC |= (1 << PORTC0)
-#define out_l         PORTC &= (~(1 << PORTC0))
-#define clock_delay_T     Timer_T0_sub(T0_delay_1ms)
-#define input_h         (PINC & (1 << PINC0))
-#define clock_delay_R     Timer_T0_sub(T0_delay_1ms)
-#define half_clock_delay_R    Timer_T0_sub(T0_delay_500us)
 
-void UART_Tx(unsigned char);
+
+void UART_Tx(int);
 unsigned char UART_Rx(void);
 void Bin_to_PC(unsigned char);
 
+
+
 int main(void)
-{ unsigned char Sig_byte;
+{ unsigned char Sig_byte[24];
+
+char address = 0x80;
+  char offset = 0;
+int eep_add;
+int eep_offset;
+
+
+int test = 0;
     setup_328_HW;
   
-  User_prompt;
+  User_prompt;                                        //PINC0 initialised Hi Z input
+ 
+  sendString("\r\nUPDI development program:  POR required to reset UPDI:  AK to start\r\n");
+ waitforkeypress();
+ 
+  if(PINC & (1 << PINC0))
+  DDRC |= (1 << DDC0);                                //Drive reset low
+else while(1);
   
+  delay_of_0_25uS;                                    //Wait 0.25uS. None:OK, 0.75uS:OK, 5mS:fails
+ 
+  DDRC &= (~(1 << DDC0));                             //Release the line: Hi Z
   
-  DDRC |= (1 << DDC0);          //Set PC0 to output high
+  while(!(PINC & (1 << PINC0)))test += 1;             //estimated delay 8 to 10uS  Spec 10-200uS
   
-  sendString("\r\nUPDI development program: AK to start\r\n");
-  
-  
-  
-  PORTC &= (~(1 << PORTC0));              //Issue reset
-  Timer_T0_10mS_delay_x_m(1);             //5ms pulse
-  PORTC |= (1 << PORTC0);               //Release reset
-  
-  
-  delay_of_0_25uS;                  //Wait 0.25uS for UDPI to respond
-  PORTC &= (~(1 << PORTC0));              //Drive reset low
-  delay_of_0_75uS;                  //Wait 0.75uS
-  PORTC |= (1 << PORTC0);               //Release the line
-  Timer_T0_sub(T0_delay_200us);           //Wait 200uS for UDPI to stabilise
-  UART_Tx(0x55);                    //Send SYNCH
-  UART_Tx (0);                    //LDS command
-  UART_Tx (0);                    //Address of signature byte
-  Sig_byte = UART_Rx();
-  
-  //Bin_to_PC(Sig_byte);
-  sendHex(16, Sig_byte);
-  while(1);
+  Timer_T0_sub(T0_delay_200us);
+Timer_T0_sub(T0_delay_200us);
+
+
+do {
+ UART_Tx(0x55);
+  UART_Tx (0xE5);
+ for(int m = 0; m <= 15; m++){
+ Sig_byte[m] = UART_Rx(); }
+ sendString("\r\nSIB readout:\t");
+for(int m = 0; m <= 15;m++){
+  sendChar(Sig_byte[m]);}
+  sendString("\tFamily name, NVM version, OCD version, DGB_OSC frequency setting.");}while(waitforkeypress() != 'x');
+
+sendString("\r\n OK");
+
+while(1);
 }
 
 
 
-void UART_Tx(unsigned char data_byte_T){
+void UART_Tx(int data_byte_T){                          //starts Hi Z
   unsigned char parity = 0;
-  DDRC |= (1 << DDC0);                    //UART in Tx mode
-  out_l;                            //start bit
+  DDRC |= (1 << DDC0);                                  //start bit
   clock_delay_T;
+
 for (int n = 0; n <= 7; n++){
   if (data_byte_T & (1 << n))
-  {out_h; parity += 1;} else out_l;clock_delay_T;}      //clock data out
-  if (parity%2)out_h; else out_l;clock_delay_T;     //clock parity bit
-  out_h;                          //initiate stop bit 
-  clock_delay_T;                      //Stop bit
-  clock_delay_T;
-  clock_delay_T;
+  {DDRC &= (~(1 << DDC0)); parity += 1;}
+ else {DDRC |= (1 << DDC0);}clock_delay_T;}             //clock data out
+
+if (parity%2){DDRC &= (~(1 << DDC0));} 
+else {DDRC |= (1 << DDC0);}
+  clock_delay_T;                                          //clock parity bit
+  DDRC &= (~(1 << DDC0));                                 //initiate stop bit 
+  clock_delay_T;                                          //Stop bit
+  clock_delay_T;}
   
-}
 
 unsigned char UART_Rx(void){
   unsigned char data_byte_R = 0;
-  DDRC &= (~(1 << DDC0));                 //UART in Receive mode
-  PORTC &= (~(1 << PORTC0));
-  while input_h;                    //wait for start bit
+    char parity = 0;
+                          
+  while (PINC & (1 << PINC0));                                //wait for start bit
   half_clock_delay_R;
   
-  for (int n= 0; n <= 7; n++){
-    if (input_h){data_byte_R |= (1 << n);}
-    clock_delay_R;
+  for (int n= 0; n <= 7; n++){clock_delay_R;
+    if (PINC & (1 << PINC0)){data_byte_R |= (1 << n); parity += 1;}
     }
-    return data_byte_R;}
+clock_delay_R;    
+ if ((PINC & (1 << PINC0)) && (parity%2)); 
+ //else sendChar('P');                                        //Parity often received in error?????
+  
+ clock_delay_R;                                               //stop bit
+ clock_delay_R;                                               //stop bit  
+ return data_byte_R;}
