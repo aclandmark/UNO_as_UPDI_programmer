@@ -3,6 +3,9 @@
 
 
 //Based on 16MHz clock
+#define T0_delay_10us	1, 96
+#define T0_delay_20us 	2, 216
+#define T0_delay_40us 	2, 176
 #define T0_delay_100us	2,56
 #define T0_delay_200us 3, 206
 #define T0_delay_2ms 4,131
@@ -19,6 +22,9 @@ unsigned char UART_Rx(void);
 void Bin_to_PC(unsigned char);
 void Erase_code (void);
 void set_up_NVM_prog(void);
+void State_page_address(int);
+void Read_add_of_last_page(void);
+
 
 const char *Key_chip_erase = "0x4E564D4572617365";
 const char *Key_NVM_prog = "0x4E564D50726F6720";
@@ -94,3 +100,18 @@ User_response = receiveChar();\
 if((User_response == 'R') || (User_response == 'r'))break;} sendString("\r\n");
 
 
+
+/*************************************************************************************************/
+
+
+#define burn_page \
+start_add = 0x1000;\
+UART_Tx(0x55);\
+UART_Tx(0x44);\
+UART_Tx(start_add);\
+UART_Tx(start_add >> 8);\
+UART_Rx();\
+Timer_T0_sub(T0_delay_200us);\
+UART_Tx(0x01);\
+UART_Rx();\
+Timer_T0_sub(T0_delay_5ms);
