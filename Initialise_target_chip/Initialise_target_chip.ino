@@ -11,7 +11,9 @@
 
 int main(void)
 { char kepress;
-
+int start_add;
+int flash_data;
+int page_address;
 
 
     setup_328_HW;
@@ -57,29 +59,55 @@ Erase_code();
 newline();
 set_up_NVM_prog();
 
-
-
 sendString("\r\nSignature byte readout\t\t");
-
+start_add = 0x1100;
+for(int m = 0; m<=2; m++){
 UART_Tx(0x55);
 UART_Tx(0x04);
-UART_Tx(0x00);
-UART_Tx(0x11);
+UART_Tx(start_add++);
+UART_Tx(start_add >> 8);
 sendHex(16, UART_Rx());
+Timer_T0_sub(T0_delay_200us);}
 
+
+
+sendString("\r\nProgramming flash");
+waitforkeypress();
+flash_data = 0;
+for(int n = 0; n <= 3; n++){
+page_address = 0x8000 + n*0x40;
+start_add = page_address;
+for(int m = 0; m<=63; m++){
+UART_Tx(0x55);
+UART_Tx(0x44);
+UART_Tx(start_add);
+UART_Tx(start_add >> 8);
+UART_Rx();
 Timer_T0_sub(T0_delay_200us);
-UART_Tx(0x55);
-UART_Tx(0x04);
-UART_Tx(0x01);
-UART_Tx(0x11);
-sendHex(16, UART_Rx());
-
+UART_Tx(flash_data++);
+if(UART_Rx() == 0x40); else while(1);
 Timer_T0_sub(T0_delay_200us);
+start_add += 1;}
+ 
+newline();
+State_page_address(page_address);
+burn_page;
+
+Read_add_of_last_page();
+if (n == 3)sendString("\r\nRead flash\r\n");}
+
+waitforkeypress();
+newline();
+start_add = 0x8000;
+for(int m = 0; m<=255; m++){
+
 UART_Tx(0x55);
 UART_Tx(0x04);
-UART_Tx(0x02);
-UART_Tx(0x11);
+UART_Tx(start_add++);
+UART_Tx(start_add >> 8);
 sendHex(16, UART_Rx());
+Timer_T0_sub(T0_delay_200us);}
+
 
 
 
