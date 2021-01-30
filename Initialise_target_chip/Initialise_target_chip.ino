@@ -6,7 +6,7 @@
 
 #include "Project_header_file.h"
 
-
+int read_flash(int);
 
 
 int main(void)
@@ -14,7 +14,11 @@ int main(void)
 int start_add;
 int flash_data;
 int page_address;
-unsigned char array[256];
+unsigned char array[100];
+unsigned int Hex_cmd, Rx_byte;
+char cmd_h;
+
+
 
     setup_328_HW;
   
@@ -118,38 +122,50 @@ Timer_T0_sub(T0_delay_200us);
 
 UART_Tx(0x55);
 UART_Tx(0xA0);                      //Setup repeat operation
-UART_Tx(0xFE);                      //Repeat 255 times
+UART_Tx(0x36);                      //Repeat 55 times
 UART_Tx(0x55);
 UART_Tx(0x24);                      //Use LD to readout byte and increment the pointer
-for(int m = 1; m <= 255; m++){
+for(int m = 1; m <= 55; m++){
   array[m] = UART_Rx();}
 
-for(int m = 1; m <= 255; m++){
-  sendHex(16, array[m]);
+for(int m = 0; m <= 55; m += 2){
+  sendHex(16, ((array[m] << 8) | array[m+1]));
   Timer_T0_sub(T0_delay_5ms);}
 
 
 /******************************The simple print out command set*******************
-********************************Note that timr is not an issue here***************/
-
+********************************Note that time is not an issue here***************/
 waitforkeypress();
-newline();
+newline();newline();
 start_add = 0x8000;
-for(int m = 0; m<=255; m++){
-
-UART_Tx(0x55);
-UART_Tx(0x04);
-UART_Tx(start_add++);
-UART_Tx(start_add >> 8);
-sendHex(16, UART_Rx());
-Timer_T0_sub(T0_delay_200us);}
-
-
-
-
+for(int m = 0; m<=255; m+=2){
+sendHex(16,read_flash(start_add));
+start_add +=2;}
 
 while(1);
 }
+
+
+int read_flash(int flash_add){
+  int Hex_cmd;
+UART_Tx(0x55);
+UART_Tx(0x04);
+UART_Tx(flash_add);
+UART_Tx(flash_add >> 8);
+ Hex_cmd = UART_Rx() << 8;
+ Timer_T0_sub(T0_delay_200us);
+ flash_add += 1;
+ UART_Tx(0x55);
+UART_Tx(0x04);
+UART_Tx(flash_add);
+UART_Tx(flash_add >> 8);
+Hex_cmd |= UART_Rx();
+Timer_T0_sub(T0_delay_200us);
+return Hex_cmd;
+}
+
+
+
 
 
 ISR(TIMER1_OVF_vect) {Chip_erase_timeout = 1;TCCR1B = 0;}
