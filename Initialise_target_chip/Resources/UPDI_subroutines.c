@@ -90,3 +90,42 @@ for(int m = 0; m <= 7; m++){
 key_h = *(Key + 2*(8 - m));
 key_l = *(Key + 2*(8 - m) + 1);
 UART_Tx(txt2bin(key_h,key_l));}}
+
+
+
+
+void State_page_address(int PA){
+int reg_add;
+reg_add = 0x1008;               //state page address
+UART_Tx(0x55);
+UART_Tx(0x45);
+UART_Tx(reg_add);
+UART_Tx(reg_add >> 8);
+UART_Rx();
+Timer_T0_sub(T0_delay_200us);
+UART_Tx(PA);
+UART_Tx(PA >> 8);
+UART_Rx();
+Timer_T0_sub(T0_delay_200us);}
+
+
+
+void Read_add_of_last_page(void){
+int reg_add;
+
+reg_add = 0x1008;
+UART_Tx(0x55);
+UART_Tx(0x04);
+UART_Tx(reg_add++);
+UART_Tx(reg_add >> 8);
+sendHex(16, UART_Rx());
+Timer_T0_sub(T0_delay_200us);
+UART_Tx(0x55);
+UART_Tx(0x04);
+UART_Tx(reg_add);
+UART_Tx(reg_add >> 8);
+sendHex(16, UART_Rx());
+Timer_T0_sub(T0_delay_200us);}
+
+
+
