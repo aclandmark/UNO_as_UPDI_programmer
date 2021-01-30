@@ -14,7 +14,7 @@ int main(void)
 int start_add;
 int flash_data;
 int page_address;
-
+unsigned char array[256];
 
     setup_328_HW;
   
@@ -95,6 +95,42 @@ burn_page;
 
 Read_add_of_last_page();
 if (n == 3)sendString("\r\nRead flash\r\n");}
+
+/************Read flash using the "REPEAT" command*********************************
+Not really very useful here:
+REPEAT keeps the UART clock going without a break untill the operation is complete
+There is no time to send the output to the PC. 
+It must be saved to an array and printed out latter on.*****************************/  
+
+waitforkeypress();
+newline();
+UART_Tx(0x55);
+UART_Tx(0x69);                      //Use ST to store 2 byte pointer
+UART_Tx(0x0);
+UART_Tx(0x80);                      //Address to be stored in pointer register            
+UART_Rx();                          //Ack pulse
+Timer_T0_sub(T0_delay_200us);
+
+UART_Tx(0x55);
+UART_Tx(0x24);                      //Use LD to readout byte and increment the pointer
+array[0] = UART_Rx();
+Timer_T0_sub(T0_delay_200us);
+
+UART_Tx(0x55);
+UART_Tx(0xA0);                      //Setup repeat operation
+UART_Tx(0xFE);                      //Repeat 255 times
+UART_Tx(0x55);
+UART_Tx(0x24);                      //Use LD to readout byte and increment the pointer
+for(int m = 1; m <= 255; m++){
+  array[m] = UART_Rx();}
+
+for(int m = 1; m <= 255; m++){
+  sendHex(16, array[m]);
+  Timer_T0_sub(T0_delay_5ms);}
+
+
+/******************************The simple print out command set*******************
+********************************Note that timr is not an issue here***************/
 
 waitforkeypress();
 newline();
