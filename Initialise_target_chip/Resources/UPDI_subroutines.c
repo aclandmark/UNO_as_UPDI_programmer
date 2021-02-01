@@ -15,11 +15,11 @@ else sendString("\r\nChip erase failed");
 
 UPDI_reset;
 
-Chip_erase_timeout = 0;\
+Chip_erase_timeout = 0;
 Timer_T1_sub_with_interrupt(T1_delay_1Sec);
 sei();
 do {                                    /*wait for chip erase to complete*/
-Timer_T0_sub(T0_delay_200us);           /*Estimated to takes just under 5ms*/
+Timer_T0_sub(T0_delay_200us);         // Estimated to takes just under 5ms
 UART_Tx(0x55);
 UART_Tx(0x8B);                          /*Test lockstatus, bit 0 of SYS_STATUS register (reg B)*/
 Rx_Byte = UART_Rx();
@@ -50,7 +50,7 @@ Chip_erase_timeout = 0;
 Timer_T1_sub_with_interrupt(T1_delay_1Sec);
 sei();
 do {                                    /*wait for chip erase to complete*/
-Timer_T0_sub(T0_delay_200us);           /*Estimated to takes just under 5ms*/
+Timer_T0_sub(T0_delay_200us);           //Estimated to takes just under 5ms*/
 UART_Tx(0x55);
 UART_Tx(0x8B);                          /*Test lockstatus, bit 0 of SYS_STATUS register (reg B)*/
 Rx_Byte = UART_Rx();
@@ -106,7 +106,8 @@ Timer_T0_sub(T0_delay_200us);
 UART_Tx(PA);
 UART_Tx(PA >> 8);
 UART_Rx();
-Timer_T0_sub(T0_delay_200us);}
+Timer_T0_sub(T0_delay_200us);
+}
 
 
 
@@ -125,7 +126,8 @@ UART_Tx(0x04);
 UART_Tx(reg_add);
 UART_Tx(reg_add >> 8);
 sendHex(16, UART_Rx());
-Timer_T0_sub(T0_delay_200us);}
+Timer_T0_sub(T0_delay_200us);
+}
 
 
 
