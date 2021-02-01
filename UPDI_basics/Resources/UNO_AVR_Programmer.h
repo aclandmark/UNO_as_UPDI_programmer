@@ -3,6 +3,7 @@
 #define WP 							0x01									//Write page buffer to memory
 #define NVMCTRL_ADDR_reg 			0x1008
 #define send64bitKey_cmd 			0xE0
+#define download_SIB				0xE5
 #define LCDS						0x80
 #define ASI_KEY_STATUS_reg			0x07
 #define ASI_SYS_STATUS_reg			0x0B
@@ -12,8 +13,12 @@
 #define LDS_from					0x00
 #define word_address				0x04
 
+#define STS							0x40
+
 #define FUSE_base_address			0x1280
 #define Signature_base_address		0x1100
+
+
 
 
 //8 MHz clock
