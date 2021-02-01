@@ -1,5 +1,7 @@
 
+//8 MHz clock
 
+#define T1_delay_1Sec 4,0
 
 
 //Based on 16MHz clock
@@ -33,7 +35,11 @@ char User_response;
 unsigned char SIB_byte[24], Rx_Byte;
 int test = 0;
 volatile char Chip_erase_timeout;
-
+volatile int prog_counter;
+int FlashSZ;
+int Hex_cmd;
+int cmd_counter;
+int read_ops;
 
 /************************************************************************************************************************************/
 #define setup_328_HW \
@@ -67,13 +73,13 @@ UART_Tx(0x55);\
 UART_Tx(0xC8);\
 UART_Tx(0x59);\
 Timer_T0_sub(T0_delay_200us);\
-\
 UART_Tx(0x55);\
 UART_Tx(0xC8);\
 UART_Tx(0x0);
 
 
-
+//Timer_T0_sub(T0_delay_200us);
+//Timer_T0_sub(T0_delay_200us);
 
 /************************************************************************************************************************************/
 #define initialise_IO \
@@ -115,3 +121,6 @@ Timer_T0_sub(T0_delay_200us);\
 UART_Tx(0x01);\
 UART_Rx();\
 Timer_T0_sub(T0_delay_5ms);
+
+
+//Timer_T0_sub(T0_delay_200us);
