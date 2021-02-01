@@ -1,3 +1,5 @@
+#include <Ethernet.h>
+
 /*
  * UPDI_programmer.c
  *
@@ -71,10 +73,11 @@ UART_Tx(0x04);
 UART_Tx(start_add++);
 UART_Tx(start_add >> 8);
 sendHex(16, UART_Rx());
-Timer_T0_sub(T0_delay_200us);}
+Timer_T0_sub(T0_delay_200us);////////////////////////
+}
 
-
-
+FlashSZ = 0xC000;
+prog_counter = 0;
 sendString("\r\nProgramming flash");
 waitforkeypress();
 flash_data = 0;
@@ -87,11 +90,12 @@ UART_Tx(0x44);
 UART_Tx(start_add);
 UART_Tx(start_add >> 8);
 UART_Rx();
-Timer_T0_sub(T0_delay_200us);
+Timer_T0_sub(T0_delay_200us);///////////////////////////////////
 UART_Tx(flash_data++);
 if(UART_Rx() == 0x40); else while(1);
-Timer_T0_sub(T0_delay_200us);
-start_add += 1;}
+Timer_T0_sub(T0_delay_200us);/////////////////////////////////////
+start_add += 1;
+prog_counter += 1;}
  
 newline();
 State_page_address(page_address);
@@ -105,7 +109,7 @@ Not really very useful here:
 REPEAT keeps the UART clock going without a break untill the operation is complete
 There is no time to send the output to the PC. 
 It must be saved to an array and printed out latter on.*****************************/  
-
+/*
 waitforkeypress();
 newline();
 UART_Tx(0x55);
@@ -131,21 +135,23 @@ for(int m = 1; m <= 55; m++){
 for(int m = 0; m <= 55; m += 2){
   sendHex(16, ((array[m] << 8) | array[m+1]));
   Timer_T0_sub(T0_delay_5ms);}
-
+*/
 
 /******************************The simple print out command set*******************
 ********************************Note that time is not an issue here***************/
 waitforkeypress();
 newline();newline();
+Verify_Flash_Hex ();
+/***********
 start_add = 0x8000;
 for(int m = 0; m<=255; m+=2){
 sendHex(16,read_flash(start_add));
 start_add +=2;}
-
+*********************************/
 while(1);
 }
 
-
+/*
 int read_flash(int flash_add){
   int Hex_cmd;
 UART_Tx(0x55);
@@ -163,7 +169,7 @@ Hex_cmd |= UART_Rx();
 Timer_T0_sub(T0_delay_200us);
 return Hex_cmd;
 }
-
+*/
 
 
 
