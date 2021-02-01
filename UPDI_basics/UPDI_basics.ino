@@ -44,7 +44,7 @@ Timer_T0_sub(T0_delay_200us);
 /****************************Print out the SIB****************************/
 do {
  UART_Tx(0x55);
-  UART_Tx (0xE5);
+  UART_Tx (download_SIB);
  for(int m = 0; m <= 15; m++){
  SIB_byte[m] = UART_Rx(); }
  sendString("\r\nSIB readout:\t");
@@ -73,7 +73,7 @@ read_out_fuses();
 
 sendString("\r\n Update fuze? Y or N");
 if (waitforkeypress() == 'Y')
-{write_fuse (0x128A, 0xC5);
+{write_fuse (0x128A, 0xC5);                             //release lock bits
 read_out_fuses();}
 
 /***************************************Program the flash******************/
@@ -90,7 +90,7 @@ page_address = 0x8000 + n*0x40;
 start_add = page_address;
 for(int m = 0; m<=63; m++){
 UART_Tx(0x55);
-UART_Tx(0x44);
+UART_Tx(STS | word_address);
 UART_Tx(start_add);
 UART_Tx(start_add >> 8);
 UART_Rx();
