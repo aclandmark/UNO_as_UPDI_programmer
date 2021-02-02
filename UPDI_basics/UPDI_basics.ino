@@ -7,13 +7,7 @@
 
 #include "Project_header_file.h"
 
-int read_flash(int);
-void write_fuse(int, unsigned char);
-void read_out_fuses(void);
-void read_out_signature_bytes(void);
-void Verify_Flash_Hex (void);
-void Verify_Flash_Hex_basic (void);
-void Read_NVM_Reg(int, char);
+
 
 int main(void)
 { char kepress;
@@ -23,14 +17,11 @@ int page_address;
 unsigned int Hex_cmd, Rx_byte;
 char cmd_h;
 
-
-
-    setup_328_HW;
-  
-  User_prompt;                                        //PINC0 initialised Hi Z input
+setup_328_HW;
+User_prompt;                                        //PINC0 initialised Hi Z input
  
-  sendString("\r\nUPDI development program:  POR required to reset UPDI:  AK to start\r\n");
- waitforkeypress();
+sendString("\r\nUPDI development program:  POR required to reset UPDI:  AK to start\r\n");
+waitforkeypress();
  
   if(PINC & (1 << PINC0))
   DDRC |= (1 << DDC0);                                //Drive reset low
@@ -57,34 +48,25 @@ for(int m = 0; m <= 15;m++){
 
 
 sendString("\r\nInitialising NVM programming\r\n");
-
-/***************chip erase************************/
 sendString("\r\nErase chip? Y or N");
 if (waitforkeypress() == 'Y'){sendString ("\tChip erased");
 Erase_code();}
 
 newline();
-set_up_NVM_prog();
-
+if (set_up_NVM_prog())
 sendString("\r\nSignature byte readout\t\t");
+else {sendString("\r\nPOR and Erase to proceed!"); while(1);}
 read_out_signature_bytes();
 newline();
 sendString("\r\nFuse bytes:\t");
 read_out_fuses();
 
-sendString("\r\n Update fuze? Y or N");
-if (waitforkeypress() == 'Y')
-{write_fuse (0x128A, 0xC5);                             //release lock bits
-read_out_fuses();}
-
 /***************************************Program the flash******************/
-
-sendString("\r\n Program flash? Y or N");
+sendString("\r\nProgram flash? Y or N");
 if (waitforkeypress() == 'Y'){
 FlashSZ = 0xC000;
 prog_counter = 0;
 sendString("\r\nProgramming flash");
-waitforkeypress();
 flash_data = 0;
 for(int n = 0; n <= 3; n++){
 page_address = 0x8000 + n*0x40;
@@ -101,31 +83,20 @@ if(UART_Rx() == 0x40); else while(1);
 Timer_T0_sub(T0_delay_40us);
 start_add += 1;
 prog_counter += 1;}
- 
 newline();
-Write_page_to_NVM(page_address);
-
-
-//Read_NVM_Reg(NVMCTRL_ADDR_reg);
-
-}}
+Write_page_to_NVM(page_address);}}
 
 sendString("\r\nRead flash\r\n");
-
-/******************************The simple print out command set*******************
-********************************Note that time is not an issue here***************/
-waitforkeypress();
-newline();newline();
 Verify_Flash_Hex_basic ();
 
+sendString("Unlocking device");
+write_fuse (0x128A, 0xC5);        //Device unlocked
 
-sendString("Lock or unlock device Y or N");
+sendString("\r\nY to Lock device or AOK");
 if (waitforkeypress() == 'Y')
 {write_fuse (0x128A, 0x0);
-sendString("Device locked\r\n");}
-else 
-{write_fuse (0x128A, 0xC5);
-sendString("Device unlocked\r\n");}
+sendString("\r\nDevice locked\r\n");}
+else sendString("\r\nDevice unlocked\r\n");
 
 
 while(1);}
