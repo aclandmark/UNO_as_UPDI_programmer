@@ -111,7 +111,7 @@ char skip_lines[4];													//Enter number to limit the print out
 
 if(prog_counter == 0)prog_counter = 256;
 
-sendString("\r\nPress 0 to verify flash or AOK\r\n");
+sendString("Press 0 to verify flash or AOK\r\n");
 if(waitforkeypress() != '0')return;
 
 phys_address = 0x8000;  read_ops=0; 
@@ -172,14 +172,14 @@ newline();
 int read_flash(int flash_add){							//Read integer from flash
   int Hex_cmd;
 UART_Tx(0x55);											//SYNCH pulses
-UART_Tx(0x04);											//Send command LDS byte
+UART_Tx(LDS_from | word_address);											//Send command LDS byte
 UART_Tx(flash_add);										//Destination addess LSB
 UART_Tx(flash_add >> 8);								//Destination address MSB
  Hex_cmd = UART_Rx() << 8;								//Receive data byte
  Timer_T0_sub(T0_delay_200us);							//Pause
  flash_add += 1;										//Next address in flash
  UART_Tx(0x55);											//SYNCH pulses
-UART_Tx(0x04);											//Send command LDS byte
+UART_Tx(LDS_from | word_address);											//Send command LDS byte
 UART_Tx(flash_add);
 UART_Tx(flash_add >> 8);
 Hex_cmd |= UART_Rx();									//Combine both data bytes
