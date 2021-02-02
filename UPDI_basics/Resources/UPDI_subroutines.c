@@ -95,7 +95,7 @@ UART_Tx(txt2bin(key_h,key_l));}}
 /**********************************************************************************************************/
 void Write_page_to_NVM(int PA){			//PA is page address
 UART_Tx(0x55);
-UART_Tx(0x45);								//
+UART_Tx(STS | int_data);				//UART_Tx(0x45);	//
 UART_Tx(NVMCTRL_ADDR_reg);
 UART_Tx(NVMCTRL_ADDR_reg >> 8);
 UART_Rx();
@@ -106,12 +106,12 @@ UART_Rx();
 Timer_T0_sub(T0_delay_200us);
 
 UART_Tx(0x55);
-UART_Tx(0x44);
+UART_Tx(STS | byte_data);				//UART_Tx(0x44);
 UART_Tx(NVMCTRL_CTRLA);
 UART_Tx(NVMCTRL_CTRLA >> 8);
 UART_Rx();
 Timer_T0_sub(T0_delay_200us);
-UART_Tx(WP);
+UART_Tx(WP_cmd);
 UART_Rx();
 Timer_T0_sub(T0_delay_5ms);}
 
@@ -153,10 +153,11 @@ Note: When writing the fuses write all reserved bits to ‘1’.
 /*******/
 
 
+
 UART_Tx(0x55);                              //Send lock bit address to NVMCTRL.ADD registers
-UART_Tx(0x45);                                
-UART_Tx(0x08);                                //Address of NVMCTRL.ADD registers                        
-UART_Tx(0x10);
+UART_Tx(STS | int_data);										//UART_Tx(0x45);                                
+UART_Tx(NVMCTRL_ADDR_reg);                                //Address of NVMCTRL.ADD registers                        
+UART_Tx(NVMCTRL_ADDR_reg >> 8);
 //UART_Rx();
 sendHex(16,UART_Rx() | 0x01);
 Timer_T0_sub(T0_delay_40us);
@@ -167,9 +168,9 @@ sendHex(16,UART_Rx() | 0x02);
 Timer_T0_sub(T0_delay_40us);
 
 UART_Tx(0x55);                                //Send key 0xC5 (device unlocked) to NVMCTRL.DATA register)
-UART_Tx(0x44);                                
-UART_Tx(0x06);                                //Adress of NVMCTRL.DATA registers                       
-UART_Tx(0x10);
+UART_Tx(STS | byte_data);						//UART_Tx(0x44);                                
+UART_Tx(NVMCTRL_DATA_reg);                                //Adress of NVMCTRL.DATA registers                       
+UART_Tx(NVMCTRL_DATA_reg >> 8);
 sendHex(16,UART_Rx() |0x03);
 //UART_Rx();
 Timer_T0_sub(T0_delay_40us);
@@ -181,16 +182,17 @@ Timer_T0_sub(T0_delay_5ms);
 
 
 UART_Tx(0x55);                                //Enter write to fuse byte command into NVM.CTRLA register
-UART_Tx(0x44);                                
-UART_Tx(0x00);                                //Register address                         
-UART_Tx(0x10);
+UART_Tx(STS | byte_data);						//UART_Tx(0x44);                                
+UART_Tx(NVMCTRL_CTRLA);                                //Register address                         
+UART_Tx(NVMCTRL_CTRLA >> 8);
 sendHex(16,UART_Rx() |0x04);
 //UART_Rx();
 Timer_T0_sub(T0_delay_5us);
-UART_Tx(0x07);                                 //Command to update the fuses.  CMD is 0x07
+UART_Tx(cmd_update_fuse);                                 //Command to update the fuses.  CMD is 0x07
 sendHex(16,UART_Rx() | 0x05);
 //UART_Rx();
 Timer_T0_sub(T0_delay_200us);
+waitforkeypress();
 UPDI_reset;
 
 sendString("UNO reset\r\n");
