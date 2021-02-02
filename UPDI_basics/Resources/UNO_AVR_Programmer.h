@@ -1,22 +1,32 @@
 
 #define NVMCTRL_CTRLA  				0x1000
-#define WP 							0x01									//Write page buffer to memory
+#define Signature_base_address		0x1100
 #define NVMCTRL_ADDR_reg 			0x1008
+#define NVMCTRL_DATA_reg			0x1006
+#define FUSE_base_address			0x1280
+
+#define ASI_KEY_STATUS_reg			0x07
+#define ASI_Reset_Request_reg		0x08
+#define ASI_SYS_STATUS_reg			0x0B
+
+#define Reset_signature				0x59
+
+#define WP_cmd 						0x01			//Write page buffer to memory
 #define send64bitKey_cmd 			0xE0
 #define download_SIB				0xE5
+#define cmd_update_fuse				0x07
+
 #define LCDS						0x80
-#define ASI_KEY_STATUS_reg			0x07
-#define ASI_SYS_STATUS_reg			0x0B
 #define STCS						0xC0
-#define ASI_Reset_Request_reg		0x08
-#define Reset_signature				0x59	
+
 #define LDS_from					0x00
 #define word_address				0x04
 
 #define STS							0x40
+#define byte_data					0x04
+#define int_data					0x05
 
-#define FUSE_base_address			0x1280
-#define Signature_base_address		0x1100
+
 
 
 
