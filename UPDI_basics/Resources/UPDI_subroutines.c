@@ -1,6 +1,5 @@
 char txt2bin(char A, char B);
 void send_key(const char*);
-
 void Read_NVM_Reg(int, char);
 
 /**********************************************************************************************************/
@@ -36,7 +35,7 @@ sendHex(10, test);}
 
 
 /**********************************************************************************************************/
-void set_up_NVM_prog(void){
+char set_up_NVM_prog(void){
 send_key(Key_NVM_prog);
 UART_Tx(0x55);
 UART_Tx(LCDS | ASI_KEY_STATUS_reg);           //Test NVM_prog bit 4 of ASI_KEY_STATUS register (reg 7)
@@ -58,8 +57,8 @@ if(UPDI_timeout)break;
 }while(!(Rx_Byte & 0x08));                 /*Exit when lock status bit is zero*/
 cli();
 
-if (UPDI_timeout) sendString("\r\nNVMPROG failure: \t");
-else sendString("\r\nOK Ready for NVM programming\t");
+if (UPDI_timeout) {sendString("\r\nNVMPROG failure: \t");return 0;}
+else {sendString("\r\nReady for NVM programming\t");return 1;}
 sendHex(16, Rx_Byte);
 sendHex(10, test);
 newline();}
@@ -180,10 +179,7 @@ UART_Tx(fuse_add >> 8);
 UART_Rx();                               //Adddress of lock byte
 Timer_T0_sub(T0_delay_200us);
 
-
-
 Read_NVM_Reg(NVMCTRL_ADDR_reg, 'I');
-
 
 UART_Tx(0x55);                                //Send key 0xC5 (device unlocked) to NVMCTRL.DATA register)
 UART_Tx(STS | byte_data);						//UART_Tx(0x44);                                
@@ -193,30 +189,19 @@ UART_Rx();
 Timer_T0_sub(T0_delay_200us);
 UART_Tx(value); 
 UART_Rx();
-Timer_T0_sub(T0_delay_5ms);
-
+Timer_T0_sub(T0_delay_200us);
 
 Read_NVM_Reg(NVMCTRL_DATA_reg, 'B');
-
 
 UART_Tx(0x55);                                //Enter write to fuse byte command into NVM.CTRLA register
 UART_Tx(STS | byte_data);						//UART_Tx(0x44);                                
 UART_Tx(NVMCTRL_CTRLA);                                //Register address                         
 UART_Tx(NVMCTRL_CTRLA >> 8);
-sendHex(16,UART_Rx() |0x04);
-Timer_T0_sub(T0_delay_5us);
-UART_Tx(cmd_update_fuse);                                 //Command to update the fuses.  CMD is 0x07
-sendHex(16,UART_Rx() | 0x05);
-//UART_Rx();
+UART_Rx();
 Timer_T0_sub(T0_delay_200us);
-
-
-
-waitforkeypress();
-//UPDI_reset;
-//sendString("UNO reset\r\n");
-//set_up_NVM_prog();
-}
+UART_Tx(cmd_update_fuse);                                 //Command to update the fuses.  CMD is 0x07
+UART_Rx();
+Timer_T0_sub(T0_delay_200us);}
 
 
 
@@ -245,5 +230,4 @@ UART_Tx(LDS_from | word_address);
 UART_Tx(start_add++);
 UART_Tx(start_add >> 8);
 sendHex(16, UART_Rx());
-Timer_T0_sub(T0_delay_200us);} 
-}
+Timer_T0_sub(T0_delay_200us);}}
