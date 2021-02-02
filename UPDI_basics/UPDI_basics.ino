@@ -13,6 +13,7 @@ void read_out_fuses(void);
 void read_out_signature_bytes(void);
 void Verify_Flash_Hex (void);
 void Verify_Flash_Hex_basic (void);
+void Read_NVM_Reg(int, char);
 
 int main(void)
 { char kepress;
@@ -103,10 +104,10 @@ prog_counter += 1;}
  
 newline();
 Write_page_to_NVM(page_address);
-//burn_page;
 
-Read_add_of_last_page();
-//if (n == 3)sendString("\r\nRead flash\r\n");
+
+//Read_NVM_Reg(NVMCTRL_ADDR_reg);
+
 }}
 
 sendString("\r\nRead flash\r\n");
@@ -118,10 +119,13 @@ newline();newline();
 Verify_Flash_Hex_basic ();
 
 
-sendString("Lock device Y or N");
+sendString("Lock or unlock device Y or N");
 if (waitforkeypress() == 'Y')
 {write_fuse (0x128A, 0x0);
-sendString("Device locked\r\n");} 
+sendString("Device locked\r\n");}
+else 
+{write_fuse (0x128A, 0xC5);
+sendString("Device unlocked\r\n");}
 
 
 while(1);}
