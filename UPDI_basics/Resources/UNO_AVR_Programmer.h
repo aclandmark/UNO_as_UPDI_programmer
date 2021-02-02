@@ -32,7 +32,6 @@
 
 
 //8 MHz clock
-
 #define T1_delay_1Sec 4,0
 
 
@@ -51,17 +50,28 @@
 #define T0_delay_10ms 5,100
 
 
-#define T1_delay_1Sec 4,0
-
 
 
 void UART_Tx(int);
 unsigned char UART_Rx(void);
 void Bin_to_PC(unsigned char);
 void Erase_code (void);
-void set_up_NVM_prog(void);
+char set_up_NVM_prog(void);
 void Write_page_to_NVM(int);
 void Read_add_of_last_page(void);
+
+
+int read_flash(int);
+void write_fuse(int, unsigned char);
+void read_out_fuses(void);
+void read_out_signature_bytes(void);
+void Verify_Flash_Hex (void);
+void Verify_Flash_Hex_basic (void);
+void Read_NVM_Reg(int, char);
+
+
+
+
 
 
 const char *Key_chip_erase = "0x4E564D4572617365";
@@ -76,6 +86,8 @@ int FlashSZ;
 int Hex_cmd;
 int cmd_counter;
 int read_ops;
+
+
 
 /************************************************************************************************************************************/
 #define setup_328_HW \
@@ -109,11 +121,9 @@ UART_Tx(Reset_signature);\
 Timer_T0_sub(T0_delay_200us);\
 UART_Tx(0x55);\
 UART_Tx(STCS | ASI_Reset_Request_reg);\
-UART_Tx(0x0);
+UART_Tx(0x0);\
+Timer_T0_sub(T0_delay_200us);
 
-
-//Timer_T0_sub(T0_delay_200us);
-//Timer_T0_sub(T0_delay_200us);
 
 /************************************************************************************************************************************/
 #define initialise_IO \
@@ -143,6 +153,3 @@ if((User_response == 'R') || (User_response == 'r'))break;} sendString("\r\n");
 
 /*************************************************************************************************/
 
-
-
-//Timer_T0_sub(T0_delay_200us);
