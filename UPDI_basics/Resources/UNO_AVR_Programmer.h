@@ -44,6 +44,8 @@
 #define T0_delay_40us 	2, 176
 #define T0_delay_100us	2,56
 #define T0_delay_200us 3, 206
+#define T0_delay_400us 3, 156
+
 #define T0_delay_2ms 4,131
 #define T0_delay_5ms 5,178
 #define T0_delay_10ms 5,100
