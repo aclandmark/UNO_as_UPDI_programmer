@@ -27,6 +27,11 @@
 #define int_data					0x05
 
 
+#define ST							0x60
+#define pointer						0x09
+#define inc_ptr						0x04
+
+
 
 
 
