@@ -28,10 +28,11 @@
 
 
 #define ST							0x60
-#define pointer						0x09
-#define inc_ptr						0x04
-
-#define setup_repeat_op				0x0A
+#define byte_pointer				0x08
+#define word_pointer				0x09
+#define inc_byte_ptr				0x04
+#define inc_word_ptr				0x05
+#define setup_repeat_op				0xA0
 
 
 
@@ -75,9 +76,8 @@ void Verify_Flash_Hex (void);
 void Verify_Flash_Hex_basic (void);
 void Read_NVM_Reg(int, char);
 
-
-
-
+void cmd_to_page_buffer(int, int);
+void fill_page_buffer(unsigned char *, int);
 
 
 const char *Key_chip_erase = "0x4E564D4572617365";
