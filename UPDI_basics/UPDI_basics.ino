@@ -13,9 +13,11 @@ int main(void)
 { char kepress;
 int start_add;
 int flash_data;
-int page_address;
+int page_address, add_in_flash;
 unsigned int Hex_cmd, Rx_byte;
 char cmd_h;
+int cmd_buffer[32];
+//int test_data;
 
 setup_328_HW;
 User_prompt;                                        //PINC0 initialised Hi Z input
@@ -63,28 +65,36 @@ read_out_fuses();
 
 /***************************************Program the flash******************/
 sendString("\r\nProgram flash? Y or N");
-if (waitforkeypress() == 'Y'){
+if (waitforkeypress() == 'Y')
+{
 FlashSZ = 0xC000;
 prog_counter = 0;
-sendString("\r\nProgramming flash");
+sendString("\r\nProgramming flash\t");
+
+/*
+ * //Method 1 Send data as it is generated
 flash_data = 0;
 for(int n = 0; n <= 3; n++){
 page_address = 0x8000 + n*0x40;
-start_add = page_address;
-for(int m = 0; m<=63; m++){
-UART_Tx(0x55);
-UART_Tx(STS | word_address);
-UART_Tx(start_add);
-UART_Tx(start_add >> 8);
-UART_Rx();
-Timer_T0_sub(T0_delay_40us);
-UART_Tx(flash_data++);
-if(UART_Rx() == 0x40); else while(1);
-Timer_T0_sub(T0_delay_40us);
-start_add += 1;
-prog_counter += 1;}
+add_in_flash = page_address;
+for(int m = 0; m <= 31; m++){
+cmd_to_page_buffer(flash_data, add_in_flash);
+flash_data +=1;
+add_in_flash +=2;}
 newline();
-Write_page_to_NVM(page_address);}}
+Write_page_to_NVM(page_address);}*/
+
+
+//Method 2  Assemble data is a buffer and then send it
+flash_data = 0;
+for(int n = 0; n <= 8; n++){
+for(int m = 0; m <= 31; m++)cmd_buffer[m] = flash_data++;
+page_address = 0x8000 + n*64;
+fill_page_buffer(cmd_buffer, page_address);
+Write_page_to_NVM(page_address);}
+
+
+}
 
 sendString("\r\nRead flash\r\n");
 Verify_Flash_Hex_basic ();
