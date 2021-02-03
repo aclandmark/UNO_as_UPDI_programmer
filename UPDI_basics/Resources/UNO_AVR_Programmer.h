@@ -31,6 +31,7 @@
 #define pointer						0x09
 #define inc_ptr						0x04
 
+#define setup_repeat_op				0x0A
 
 
 
