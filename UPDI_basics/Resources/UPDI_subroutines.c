@@ -2,6 +2,7 @@ char txt2bin(char A, char B);
 void send_key(const char*);
 void Read_NVM_Reg(int, char);
 
+
 /**********************************************************************************************************/
 void Erase_code (void){
 send_key(Key_chip_erase);
@@ -231,3 +232,106 @@ UART_Tx(start_add++);
 UART_Tx(start_add >> 8);
 sendHex(16, UART_Rx());
 Timer_T0_sub(T0_delay_200us);}}
+
+
+/**********************************************************************************************************/
+void cmd_to_page_buffer(int flash_data, int add_in_flash){
+UART_Tx(0x55);
+UART_Tx(STS | int_data);
+UART_Tx(add_in_flash);
+UART_Tx(add_in_flash >> 8);
+UART_Rx();
+Timer_T0_sub(T0_delay_40us);
+UART_Tx(flash_data >> 8);
+UART_Tx(flash_data);
+UART_Rx();
+Timer_T0_sub(T0_delay_40us);}
+
+
+
+/**********************************************************************************************************/
+void fill_page_buffer(int *cmd_buffer, int add_in_flash){
+
+char High_byte = 0;
+
+/*for(int m = 0; m <= 31; m++){
+UART_Tx(0x55);
+UART_Tx(STS | int_data);
+UART_Tx(add_in_flash);
+UART_Tx(add_in_flash >> 8);
+UART_Rx();
+Timer_T0_sub(T0_delay_40us);
+UART_Tx((*cmd_buffer) >> 8);
+UART_Tx(*cmd_buffer); 
+UART_Rx();
+Timer_T0_sub(T0_delay_40us);
+add_in_flash += 2;
+cmd_buffer++;}*/
+
+
+
+/*UART_Tx(0x55);
+UART_Tx(ST | word_pointer);
+UART_Tx(add_in_flash);
+UART_Tx(add_in_flash >> 8);
+UART_Rx();
+Timer_T0_sub(T0_delay_40us);
+
+for(int m = 0; m <= 31; m++){
+UART_Tx(0x55);
+UART_Tx(ST | inc_word_ptr);
+UART_Tx((*cmd_buffer) >> 8);
+UART_Tx(*cmd_buffer); 
+UART_Rx();
+Timer_T0_sub(T0_delay_40us);
+cmd_buffer++;}*/
+
+
+/*
+UART_Tx(0x55);
+UART_Tx(ST | word_pointer);
+UART_Tx(add_in_flash);
+UART_Tx(add_in_flash >> 8);
+UART_Rx();
+Timer_T0_sub(T0_delay_40us);
+
+for(int m = 0; m <= 31; m++){
+UART_Tx(0x55);
+UART_Tx(ST | inc_byte_ptr);
+UART_Tx((*cmd_buffer) >> 8);
+UART_Rx();
+Timer_T0_sub(T0_delay_40us);
+
+UART_Tx(0x55);
+UART_Tx(ST | inc_byte_ptr);
+UART_Tx(*cmd_buffer);
+UART_Rx();
+Timer_T0_sub(T0_delay_40us);
+cmd_buffer++;}*/
+
+
+UART_Tx(0x55);
+UART_Tx(ST | word_pointer);
+UART_Tx(add_in_flash);
+UART_Tx(add_in_flash >> 8);
+UART_Rx();
+Timer_T0_sub(T0_delay_40us);
+
+
+UART_Tx(0x55);
+UART_Tx(setup_repeat_op);
+UART_Tx(63);
+Timer_T0_sub(T0_delay_40us);
+
+
+
+UART_Tx(0x55);
+UART_Tx(ST | inc_byte_ptr);
+for(int m = 0; m <= 63; m++){
+if(!(High_byte)){UART_Tx((*cmd_buffer) >> 8);High_byte = 1;}
+else{UART_Tx(*cmd_buffer);cmd_buffer++;High_byte = 0;}
+UART_Rx();
+Timer_T0_sub(T0_delay_40us);}
+
+
+}
