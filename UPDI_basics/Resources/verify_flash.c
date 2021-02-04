@@ -24,18 +24,18 @@ sendString("Integer(0-FF)?  ");										//0 prints no lines -1-, every line, -8
 skip_lines[0] = '0';												//Acquire integer between 0 and FF
 skip_lines[1] = waitforkeypress();
 skip_lines[2] = '\0';
-Timer_T1_sub(T1_delay_1Sec); 
+Timer_T1_sub(T1_delay_500ms); 
 if (isCharavailable(1)){skip_lines[0] = skip_lines[1]; 
 skip_lines[1] = receiveChar();} 
 binUnwantedChars(); 
 print_line = askiX2_to_hex(skip_lines);
 sendHex (16,print_line); sendString("   ");
 
-if (print_line == 0);												//hex file print out not required
+/*if (print_line == 0);												//hex file print out not required
 else {sendString("1/2?\r\n");										//else -1- sends file as askii, -2- sends it as hex
 print_out_mode =  waitforkeypress(); 
 binUnwantedChars();     
-newline();}
+newline();}*/
 
 
 while(1){ if(!(prog_counter_mem))break;								//print out loop starts here, exit when finished
@@ -60,8 +60,8 @@ if(print_line && (!(line_no%print_line)))							//Print out required: Print all 
 sendString("   "); line_counter++;  
 
 sendHex (16, Hex_cmd);}										//Print first command in askii or hex
-read_ops += 2;;															//Value to be sent to PC for comparison with the hex filer size
-prog_counter_mem -= 2;													//"prog_counter_mem" decrements to zero when the end of the file is reached
+read_ops += 1;															//Value to be sent to PC for comparison with the hex filer size
+prog_counter_mem -= 1;													//"prog_counter_mem" decrements to zero when the end of the file is reached
 
 
 for(int m=0; m<7; m++){												//Read the next seven locations in the flash memory   
@@ -69,7 +69,7 @@ for(int m=0; m<7; m++){												//Read the next seven locations in the flash 
 Hex_cmd = read_flash(phys_address); 
 phys_address += 2; 
 if(Hex_cmd == 0xFFFF)break;											//Read 0xFFFF: return to start of print out loop
-prog_counter_mem -= 2;
+prog_counter_mem -= 1;
 
 //if ((print_line) &&  (!(line_counter%2))) {LEDs_on;} else {LEDs_off;}              
 
@@ -77,7 +77,7 @@ if(print_line && (!(line_no%print_line)))
 
 sendHex (16, Hex_cmd);
 
-read_ops += 2;
+read_ops += 1;
 
 if(phys_address==FlashSZ)break;}
 if ((print_line)&&(!(line_no%print_line)) && (!(line_counter%8)))sendString("\r\n");
@@ -98,7 +98,7 @@ newline();}
 
 
 
-void Verify_Flash_Hex_basic (void){
+void Verify_Flash_Hex_basic (void){			//DOES WHOLE LIES ONLY
 
 
 int  line_counter = 0, print_line = 0;								//Controls printing of hex file                         
@@ -109,7 +109,9 @@ unsigned char print_out_mode = 0;									//Print out flash contents as hex or a
 char skip_lines[4];													//Enter number to limit the print out
 
 
+//if(prog_counter == 0)prog_counter = 256;
 if(prog_counter == 0)prog_counter = 256;
+//prog_counter *= 2;
 
 sendString("Press 0 to verify flash or AOK\r\n");
 if(waitforkeypress() != '0')return;
@@ -134,22 +136,22 @@ if(print_line && (!(line_no%print_line)))							//Print out required: Print all 
 sendString("   "); line_counter++;  
 
 sendHex (16, Hex_cmd);}										//Print first command in askii or hex
-read_ops += 2;;															//Value to be sent to PC for comparison with the hex filer size
-prog_counter_mem -= 2;													//"prog_counter_mem" decrements to zero when the end of the file is reached
+read_ops += 1;															//Value to be sent to PC for comparison with the hex filer size
+prog_counter_mem -= 1;													//"prog_counter_mem" decrements to zero when the end of the file is reached
 
 
 for(int m=0; m<7; m++){												//Read the next seven locations in the flash memory   
 
 Hex_cmd = read_flash(phys_address); 
 phys_address += 2; 
-prog_counter_mem -= 2;
+prog_counter_mem -= 1;
       
 
 if(print_line && (!(line_no%print_line)))
 
 sendHex (16, Hex_cmd);
 
-read_ops += 2;
+read_ops += 1;
 
 if(phys_address==FlashSZ)break;}
 if ((print_line)&&(!(line_no%print_line)) && (!(line_counter%8)))sendString("\r\n");
