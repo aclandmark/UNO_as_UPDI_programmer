@@ -86,18 +86,23 @@ Write_page_to_NVM(page_address);}*/
 
 
 //Method 2  Assemble data is a buffer and then send it
+page_SZ = 32;
 flash_data = 0;
-for(int n = 0; n <= 8; n++){
+for(int n = 0; n <= 7; n++){
 for(int m = 0; m <= 31; m++)cmd_buffer[m] = flash_data++;
 page_address = 0x8000 + n*64;
-fill_page_buffer(cmd_buffer, page_address);
+fill_page_buffer(cmd_buffer, page_address, page_SZ*2);
 Write_page_to_NVM(page_address);}
 
-
+for(int m = 0; m <= 31; m++)cmd_buffer[m] = 0;
+for(int m = 0; m <= 12; m++)cmd_buffer[m] = flash_data++;
+page_address = 0x8000 + 8*64;
+fill_page_buffer(cmd_buffer, page_address, 26);
+Write_page_to_NVM(page_address);
 }
 
 sendString("\r\nRead flash\r\n");
-Verify_Flash_Hex_basic ();
+Verify_Flash_Hex ();
 
 sendString("Unlocking device");
 write_fuse (0x128A, 0xC5);        //Device unlocked
