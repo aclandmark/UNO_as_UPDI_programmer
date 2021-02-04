@@ -39,7 +39,7 @@
 
 
 //8 MHz clock
-#define T1_delay_1Sec 4,0
+
 
 
 //Based on 16MHz clock
@@ -56,7 +56,8 @@
 #define T0_delay_5ms 5,178
 #define T0_delay_10ms 5,100
 
-
+#define T1_delay_500ms 4,32768
+#define T1_delay_1Sec 4,0
 
 
 void UART_Tx(int);
@@ -77,7 +78,7 @@ void Verify_Flash_Hex_basic (void);
 void Read_NVM_Reg(int, char);
 
 void cmd_to_page_buffer(int, int);
-void fill_page_buffer(unsigned char *, int);
+void fill_page_buffer(unsigned char *, int, unsigned char);
 
 
 const char *Key_chip_erase = "0x4E564D4572617365";
@@ -89,6 +90,7 @@ int test = 0;
 volatile char UPDI_timeout;
 volatile int prog_counter;
 int FlashSZ;
+unsigned char page_SZ;
 int Hex_cmd;
 int cmd_counter;
 int read_ops;
