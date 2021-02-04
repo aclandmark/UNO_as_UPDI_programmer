@@ -99,11 +99,11 @@ UART_Tx(STS | int_data);				//UART_Tx(0x45);	//
 UART_Tx(NVMCTRL_ADDR_reg);
 UART_Tx(NVMCTRL_ADDR_reg >> 8);
 UART_Rx();
-Timer_T0_sub(T0_delay_200us);
+Timer_T0_sub(T0_delay_40us);				//200
 UART_Tx(PA);
 UART_Tx(PA >> 8);
 UART_Rx();
-Timer_T0_sub(T0_delay_200us);
+Timer_T0_sub(T0_delay_40us);				//200
 
 
 Read_NVM_Reg(NVMCTRL_ADDR_reg, 'I');
@@ -114,7 +114,7 @@ UART_Tx(STS | byte_data);				//UART_Tx(0x44);
 UART_Tx(NVMCTRL_CTRLA);
 UART_Tx(NVMCTRL_CTRLA >> 8);
 UART_Rx();
-Timer_T0_sub(T0_delay_200us);
+Timer_T0_sub(T0_delay_40us);				//200
 UART_Tx(WP_cmd);
 UART_Rx();
 Timer_T0_sub(T0_delay_5ms);}
@@ -256,76 +256,17 @@ char High_byte = 0;
 
 block_SZ -= 1;
 
-/*for(int m = 0; m <= 31; m++){
-UART_Tx(0x55);
-UART_Tx(STS | int_data);
-UART_Tx(add_in_flash);
-UART_Tx(add_in_flash >> 8);
-UART_Rx();
-Timer_T0_sub(T0_delay_40us);
-UART_Tx((*cmd_buffer) >> 8);
-UART_Tx(*cmd_buffer); 
-UART_Rx();
-Timer_T0_sub(T0_delay_40us);
-add_in_flash += 2;
-cmd_buffer++;}*/
-
-
-
-/*UART_Tx(0x55);
-UART_Tx(ST | word_pointer);
-UART_Tx(add_in_flash);
-UART_Tx(add_in_flash >> 8);
-UART_Rx();
-Timer_T0_sub(T0_delay_40us);
-
-for(int m = 0; m <= 31; m++){
-UART_Tx(0x55);
-UART_Tx(ST | inc_word_ptr);
-UART_Tx((*cmd_buffer) >> 8);
-UART_Tx(*cmd_buffer); 
-UART_Rx();
-Timer_T0_sub(T0_delay_40us);
-cmd_buffer++;}*/
-
-
-/*
 UART_Tx(0x55);
 UART_Tx(ST | word_pointer);
 UART_Tx(add_in_flash);
 UART_Tx(add_in_flash >> 8);
 UART_Rx();
 Timer_T0_sub(T0_delay_40us);
-
-for(int m = 0; m <= 31; m++){
-UART_Tx(0x55);
-UART_Tx(ST | inc_byte_ptr);
-UART_Tx((*cmd_buffer) >> 8);
-UART_Rx();
-Timer_T0_sub(T0_delay_40us);
-
-UART_Tx(0x55);
-UART_Tx(ST | inc_byte_ptr);
-UART_Tx(*cmd_buffer);
-UART_Rx();
-Timer_T0_sub(T0_delay_40us);
-cmd_buffer++;}*/
-
-
-UART_Tx(0x55);
-UART_Tx(ST | word_pointer);
-UART_Tx(add_in_flash);
-UART_Tx(add_in_flash >> 8);
-UART_Rx();
-Timer_T0_sub(T0_delay_40us);
-
 
 UART_Tx(0x55);
 UART_Tx(setup_repeat_op);
 UART_Tx(block_SZ);
 Timer_T0_sub(T0_delay_40us);
-
-
 
 UART_Tx(0x55);
 UART_Tx(ST | inc_byte_ptr);
@@ -335,6 +276,5 @@ else{UART_Tx(*cmd_buffer);cmd_buffer++;High_byte = 0; prog_counter += 1;}
 UART_Rx();
 
 Timer_T0_sub(T0_delay_40us);}
-
 
 }
