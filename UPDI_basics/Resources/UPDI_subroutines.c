@@ -250,9 +250,11 @@ Timer_T0_sub(T0_delay_40us);}
 
 
 /**********************************************************************************************************/
-void fill_page_buffer(int *cmd_buffer, int add_in_flash){
+void fill_page_buffer(int *cmd_buffer, int add_in_flash, unsigned char block_SZ){
 
 char High_byte = 0;
+
+block_SZ -= 1;
 
 /*for(int m = 0; m <= 31; m++){
 UART_Tx(0x55);
@@ -320,17 +322,18 @@ Timer_T0_sub(T0_delay_40us);
 
 UART_Tx(0x55);
 UART_Tx(setup_repeat_op);
-UART_Tx(63);
+UART_Tx(block_SZ);
 Timer_T0_sub(T0_delay_40us);
 
 
 
 UART_Tx(0x55);
 UART_Tx(ST | inc_byte_ptr);
-for(int m = 0; m <= 63; m++){
+for(int m = 0; m <= block_SZ; m++){
 if(!(High_byte)){UART_Tx((*cmd_buffer) >> 8);High_byte = 1;}
-else{UART_Tx(*cmd_buffer);cmd_buffer++;High_byte = 0;}
+else{UART_Tx(*cmd_buffer);cmd_buffer++;High_byte = 0; prog_counter += 1;}
 UART_Rx();
+
 Timer_T0_sub(T0_delay_40us);}
 
 
