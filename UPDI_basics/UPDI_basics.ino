@@ -3,6 +3,12 @@
  * UPDI_programmer.c
  *
  *Uses UNO A0 PCO as programmer output
+
+ Fuse settings: Leave all as default except
+ SYSCFG0 0xF7     EEprom preserved during chip erase
+ SYSCFG1  0xFD   16ms SUT (For tes purposes really) 
+ 
+ 
  */ 
 
 #include "Project_header_file.h"
@@ -17,14 +23,15 @@ int page_address, add_in_flash;
 unsigned int Hex_cmd, Rx_byte;
 char cmd_h;
 int cmd_buffer[32];
-//int test_data;
+
 
 setup_328_HW;
 User_prompt;                                        //PINC0 initialised Hi Z input
  
 sendString("\r\nUPDI development program:  POR required to reset UPDI:  AK to start\r\n");
 waitforkeypress();
- 
+
+ /********************************Programmer target connection sequence************************************/
   if(PINC & (1 << PINC0))
   DDRC |= (1 << DDC0);                                //Drive reset low
 else {sendString ("Device not detected\r\n");
@@ -49,11 +56,12 @@ for(int m = 0; m <= 15;m++){
     kepress = waitforkeypress();}while(kepress != 'x');
 
 
+while(1){
+/*****************************Get ready to program to flash*********************************************/
 sendString("\r\nInitialising NVM programming\r\n");
 sendString("\r\nErase chip? Y or N");
 if (waitforkeypress() == 'Y'){sendString ("\tChip erased");
 Erase_code();}
-
 newline();
 if (set_up_NVM_prog())
 sendString("\r\nSignature byte readout\t\t");
@@ -63,7 +71,21 @@ newline();
 sendString("\r\nFuse bytes:\t");
 read_out_fuses();
 
-/***************************************Program the flash******************/
+/**************************Set fuses to user values*************************************************/
+sendString("\r\n\r\nUpdate SYSCFG0 and SYSCFG1 for 16mS SUT and ");
+sendString("\r\nEEprom preserved at chip erase");
+sendString("\r\nY to proceed, AOK to skip");
+if (waitforkeypress() == 'Y'){
+write_fuse (0x1285, 0xF7);          //CFG0
+write_fuse (0x1286, 0xFD);          //16ms SUT
+sendString("\r\n\r\nNew fuse bytes:\t");
+read_out_fuses();}
+
+
+
+
+
+/****************************************Program the flash*************************8******************/
 sendString("\r\nProgram flash? Y or N");
 if (waitforkeypress() == 'Y')
 {
@@ -71,21 +93,7 @@ FlashSZ = 0xC000;
 prog_counter = 0;
 sendString("\r\nProgramming flash\t");
 
-/*
- * //Method 1 Send data as it is generated
-flash_data = 0;
-for(int n = 0; n <= 3; n++){
-page_address = 0x8000 + n*0x40;
-add_in_flash = page_address;
-for(int m = 0; m <= 31; m++){
-cmd_to_page_buffer(flash_data, add_in_flash);
-flash_data +=1;
-add_in_flash +=2;}
-newline();
-Write_page_to_NVM(page_address);}*/
 
-
-//Method 2  Assemble data is a buffer and then send it
 page_SZ = 32;
 flash_data = 0;
 for(int n = 0; n <= 7; n++){
@@ -98,21 +106,34 @@ for(int m = 0; m <= 31; m++)cmd_buffer[m] = 0;
 for(int m = 0; m <= 12; m++)cmd_buffer[m] = flash_data++;
 page_address = 0x8000 + 8*64;
 fill_page_buffer(cmd_buffer, page_address, 26);
-Write_page_to_NVM(page_address);
-}
+Write_page_to_NVM(page_address);}
 
+
+/***********************Verify the flash***************************************************/
 sendString("\r\nRead flash\r\n");
 Verify_Flash_Hex ();
 
-sendString("Unlocking device");
-write_fuse (0x128A, 0xC5);        //Device unlocked
 
+/********************Restore fuse settings if required***************************************/
+sendString("\r\nY to Restore default fuse settings or AOK\r\n");
+if (waitforkeypress() == 'Y')
+{write_fuse (0x1285, 0xF6);                                         //CFG0
+write_fuse (0x1286, 0xF7);  }                                     //64ms SUT
+
+
+/*******************Lock/unlock device*****************************************************/
+sendString("\r\nUnlocking device");
+write_fuse (0x128A, 0xC5);                                        //Device unlocked
 sendString("\r\nY to Lock device or AOK");
 if (waitforkeypress() == 'Y')
 {write_fuse (0x128A, 0x0);
 sendString("\r\nDevice locked\r\n");}
 else sendString("\r\nDevice unlocked\r\n");
 
+
+
+sendString("\r\nFinnished AK to repeat");
+waitforkeypress();}
 
 while(1);}
 
