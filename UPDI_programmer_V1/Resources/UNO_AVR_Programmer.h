@@ -70,6 +70,21 @@
 #define T1_delay_1Sec 4,0
 
 
+
+void upload_hex(void);
+void Program_Flash_Hex (void);
+void new_record(void);
+void start_new_code_block(void);
+void Program_record(void);
+void copy_cmd_to_page_buffer(void);
+void get_next_hex_cmd(void);
+void write_page_SUB(int);
+
+
+
+
+
+
 void UART_Tx(int);
 unsigned char UART_Rx(void);
 
@@ -103,12 +118,58 @@ char User_response;
 unsigned char SIB_byte[24], Rx_Byte;
 int test = 0;
 volatile char UPDI_timeout;
-volatile int prog_counter;
+
 int FlashSZ;
-unsigned char page_SZ;
-int Hex_cmd;
-int cmd_counter;
-int read_ops;
+unsigned char PageSZ;
+signed int PAmask;												        //Used to obtain the flash page address from the hex address
+
+
+unsigned int  cmd_counter;											//Counts commands as they are downloaded from the PC
+volatile unsigned int prog_counter;											//Counts commands burned to flash
+unsigned int  read_ops=0;										//Total number of commands read from flash
+volatile int counter;										//Counts characters in a record as they are downloded from the PC
+volatile int char_count;									//The number of askii character in a single record
+volatile unsigned char Count_down;							//Counts commands as record is programmed
+volatile int   tempInt1, tempInt2;							//Used to assemble commands and addresses as the are downloaded
+int store[64];												//Used to store commands and address ready for the programmer
+volatile unsigned char w_pointer,r_pointer;					//Read/write pointers to "store" to which hex file is saved
+unsigned int Hex_cmd;										//Command read from flash during verification
+
+unsigned char cmd_pin, resp_pin, clock_pin, reset_pin;		//Used to define the programming pins
+
+unsigned int Hex_address;											//Address read from the hex file
+unsigned int HW_address;												//Hard ware address (usually tracks Hex_address)
+unsigned int page_address;									//Address of first location on a page of flash 
+volatile unsigned int write_address;									//Address on page_buffer to which next command will be written
+
+signed char short_record;									//Record  containing less that eight 16 bit commands
+unsigned char page_offset;									//Address of first location on page buffer to be used
+unsigned char space_on_page;									//Keeps a track of the space remaining on a page buffer
+unsigned char Flash_flag;									//Indicates that the page buffer contains commands
+
+signed char record_length;									//Num commands one one line of hex file (i.e. on one record)
+signed char record_length_old;								//If record length changes, length of the previous one is important
+signed char orphan;											//Indicates that the contents of a record span two flash pages
+signed char section_break;									//Set to 1 if at least one page of flash memory will be unused.
+signed char page_break;										//Page only partialy filled before programming next one starts
+volatile signed char line_offset;							//LSB of address of first command in record (usually zero)
+unsigned int prog_led_control;
+
+
+
+#define inc_w_pointer \
+w_pointer++;\
+w_pointer = w_pointer & 0x3F;
+
+
+#define inc_r_pointer \
+r_pointer++;\
+r_pointer = r_pointer & 0b00111111;
+
+
+
+
+
 
 
 
