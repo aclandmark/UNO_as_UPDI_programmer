@@ -35,18 +35,28 @@
 #define setup_repeat_op				0xA0
 
 
-
-
+#define Prog_delay            		Timer_T0_sub(T0_delay_30us)			//30 ok
+#define Prog_delay_upload			Timer_T0_sub(T0_delay_30us)	
 
 //8 MHz clock
 
 
 
 //Based on 16MHz clock
+
 #define T0_delay_2us	1, 224
+#define T0_delay_2_5us	1, 216
+#define T0_delay_4us	1, 192
+#define T0_delay_4_25us	1, 188
 #define T0_delay_5us	1, 176
+#define T0_delay_5_5us	1, 168
+#define T0_delay_8us	1, 128
+#define T0_delay_8_5us	1, 120
 #define T0_delay_10us	1, 96
+#define T0_delay_11us	1, 80
+#define T0_delay_15us	1, 16
 #define T0_delay_20us 	2, 216
+#define T0_delay_30us 	2, 196
 #define T0_delay_40us 	2, 176
 #define T0_delay_100us	2,56
 #define T0_delay_200us 3, 206
@@ -62,6 +72,11 @@
 
 void UART_Tx(int);
 unsigned char UART_Rx(void);
+
+void UART_Tx_upload(int);
+unsigned char UART_Rx_upload(void);
+
+
 void Bin_to_PC(unsigned char);
 void Erase_code (void);
 char set_up_NVM_prog(void);
