@@ -107,10 +107,10 @@ if (waitforkeypress() == 'Y')
 FlashSZ = 0xC000;
 prog_counter = 0;
 sendString("\r\nProgramming flash\t");
-
-UCSR0B |= (1<<RXCIE0);sei();
-page_SZ = 32;
-flash_data = 0;
+Program_Flash_Hex ();
+//UCSR0B |= (1<<RXCIE0);sei();
+//page_SZ = 32;
+/*flash_data = 0;
 for(int n = 0; n <= 127; n++){                                        //write whole pages
 for(int m = 0; m <= 31; m++)cmd_buffer[m] = flash_data++;
 page_address = 0x8000 + n*64;
@@ -122,15 +122,15 @@ for(int m = 0; m <= 31; m++)cmd_buffer[m] = 0;                      //write part
 for(int m = 0; m <= 12; m++)cmd_buffer[m] = flash_data++;
 page_address = 0x8000 + 128*64;
 fill_page_buffer(cmd_buffer, page_address, 26);
-Write_page_to_NVM(page_address);
+Write_page_to_NVM(page_address);*/
 
 }
 
 
 /***********************Verify the flash***************************************************/
 
-cli();
-UCSR0B &= (~(1<<RXCIE0));
+//cli();
+//UCSR0B &= (~(1<<RXCIE0));
 sendString("\r\nRead flash\r\n");
 Verify_Flash_Hex ();
 
