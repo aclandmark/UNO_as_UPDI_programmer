@@ -11,6 +11,10 @@
 #include "Resources\ASKII_subroutines.c"
 #include "Resources\UPDI_subroutines.c"
 #include "Resources\verify_flash.c"
+#include "Resources\Hex_Programmer.c"
+#include "Resources\Hex_Programmer_subs.c"
+
+
 //#include "Resources\Hex_Programmer_subs.c"
 //#include "Resources\Hex_Programmer.c"
 //#include "Resources\Device_characteristics.c"
