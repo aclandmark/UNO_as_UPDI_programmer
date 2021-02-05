@@ -99,22 +99,22 @@ UART_Tx(STS | int_data);				//UART_Tx(0x45);	//
 UART_Tx(NVMCTRL_ADDR_reg);
 UART_Tx(NVMCTRL_ADDR_reg >> 8);
 UART_Rx();
-Timer_T0_sub(T0_delay_40us);				//200
+Prog_delay;	//Timer_T0_sub(T0_delay_40us);				//200
 UART_Tx(PA);
 UART_Tx(PA >> 8);
 UART_Rx();
-Timer_T0_sub(T0_delay_40us);				//200
+Prog_delay;	//Timer_T0_sub(T0_delay_40us);				//200
 
 
-Read_NVM_Reg(NVMCTRL_ADDR_reg, 'I');
-
+//Read_NVM_Reg(NVMCTRL_ADDR_reg, 'I');
+sendChar('*');
 
 UART_Tx(0x55);
 UART_Tx(STS | byte_data);				//UART_Tx(0x44);
 UART_Tx(NVMCTRL_CTRLA);
 UART_Tx(NVMCTRL_CTRLA >> 8);
 UART_Rx();
-Timer_T0_sub(T0_delay_40us);				//200
+Prog_delay;	//Timer_T0_sub(T0_delay_40us);				//200
 UART_Tx(WP_cmd);
 UART_Rx();
 Timer_T0_sub(T0_delay_5ms);}
@@ -241,11 +241,12 @@ UART_Tx(STS | int_data);
 UART_Tx(add_in_flash);
 UART_Tx(add_in_flash >> 8);
 UART_Rx();
-Timer_T0_sub(T0_delay_40us);
+Prog_delay;	//Timer_T0_sub(T0_delay_40us);
 UART_Tx(flash_data >> 8);
 UART_Tx(flash_data);
 UART_Rx();
-Timer_T0_sub(T0_delay_40us);}
+Prog_delay;	//Timer_T0_sub(T0_delay_40us);
+}
 
 
 
@@ -256,25 +257,25 @@ char High_byte = 0;
 
 block_SZ -= 1;
 
-UART_Tx(0x55);
-UART_Tx(ST | word_pointer);
-UART_Tx(add_in_flash);
-UART_Tx(add_in_flash >> 8);
-UART_Rx();
-Timer_T0_sub(T0_delay_40us);
+UART_Tx_upload(0x55);
+UART_Tx_upload(ST | word_pointer);
+UART_Tx_upload(add_in_flash);
+UART_Tx_upload(add_in_flash >> 8);
+UART_Rx_upload();
+Prog_delay;	
 
-UART_Tx(0x55);
-UART_Tx(setup_repeat_op);
-UART_Tx(block_SZ);
-Timer_T0_sub(T0_delay_40us);
+UART_Tx_upload(0x55);
+UART_Tx_upload(setup_repeat_op);
+UART_Tx_upload(block_SZ);
+Prog_delay;	
 
-UART_Tx(0x55);
-UART_Tx(ST | inc_byte_ptr);
+
+UART_Tx_upload(0x55);
+UART_Tx_upload(ST | inc_byte_ptr);
 for(int m = 0; m <= block_SZ; m++){
-if(!(High_byte)){UART_Tx((*cmd_buffer) >> 8);High_byte = 1;}
-else{UART_Tx(*cmd_buffer);cmd_buffer++;High_byte = 0; prog_counter += 1;}
-UART_Rx();
-
-Timer_T0_sub(T0_delay_40us);}
+if(!(High_byte)){UART_Tx_upload((*cmd_buffer) >> 8);High_byte = 1;}
+else{UART_Tx_upload(*cmd_buffer);cmd_buffer++;High_byte = 0; prog_counter += 1;}
+UART_Rx_upload();
+Prog_delay_upload;}
 
 }
