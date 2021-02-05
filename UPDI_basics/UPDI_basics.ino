@@ -42,6 +42,21 @@ while(1);}
    Timer_T0_sub(T0_delay_200us);
 Timer_T0_sub(T0_delay_200us);
 
+
+UART_Tx(0x55);                //Increase UPDI clock
+UART_Tx (STCS | 0x09);
+UART_Tx (0xFD);             //01try FD
+
+Timer_T0_sub(T0_delay_200us);
+
+UART_Tx(0x55);                //limit guard band
+UART_Tx (STCS | 0x02);
+UART_Tx (0x46);
+
+Timer_T0_sub(T0_delay_200us);
+
+
+
 /****************************Print out the SIB****************************/
 do {
  UART_Tx(0x55);
@@ -96,17 +111,20 @@ sendString("\r\nProgramming flash\t");
 
 page_SZ = 32;
 flash_data = 0;
-for(int n = 0; n <= 7; n++){
+for(int n = 0; n <= 127; n++){                                        //write whole pages
 for(int m = 0; m <= 31; m++)cmd_buffer[m] = flash_data++;
 page_address = 0x8000 + n*64;
 fill_page_buffer(cmd_buffer, page_address, page_SZ*2);
 Write_page_to_NVM(page_address);}
 
-for(int m = 0; m <= 31; m++)cmd_buffer[m] = 0;
+
+for(int m = 0; m <= 31; m++)cmd_buffer[m] = 0;                      //write part of a page 
 for(int m = 0; m <= 12; m++)cmd_buffer[m] = flash_data++;
-page_address = 0x8000 + 8*64;
+page_address = 0x8000 + 128*64;
 fill_page_buffer(cmd_buffer, page_address, 26);
-Write_page_to_NVM(page_address);}
+Write_page_to_NVM(page_address);
+
+}
 
 
 /***********************Verify the flash***************************************************/
@@ -134,7 +152,7 @@ else sendString("\r\nDevice unlocked\r\n");
 
 sendString("\r\nFinnished AK to repeat");
 waitforkeypress();}
-
+UPDI_reset;///////////POR is required
 while(1);}
 
 
@@ -183,4 +201,48 @@ clock_delay_R;
   
  clock_delay_R;                                               //stop bit
  clock_delay_R;                                               //stop bit  
+ return data_byte_R;}
+
+
+
+
+/************************************************************************************************************************/
+ void UART_Tx_upload(int data_byte_T){                          //starts Hi Z
+  unsigned char parity = 0;
+  DDRC |= (1 << DDC0);                                  //start bit
+  clock_delay_T_upload;
+
+for (int n = 0; n <= 7; n++){
+  if (data_byte_T & (1 << n))
+  {DDRC &= (~(1 << DDC0)); parity += 1;}
+ else {DDRC |= (1 << DDC0);}clock_delay_T_upload;}             //clock data out
+
+if (parity%2){DDRC &= (~(1 << DDC0));} 
+else {DDRC |= (1 << DDC0);}
+  clock_delay_T_upload;                                          //clock parity bit
+  DDRC &= (~(1 << DDC0));                                 //initiate stop bit 
+  clock_delay_T_upload;                                          //Stop bit
+  clock_delay_T_upload;}
+
+
+
+
+  
+/************************************************************************************************/
+unsigned char UART_Rx_upload(void){
+  unsigned char data_byte_R = 0;
+    char parity = 0;
+                          
+  while (PINC & (1 << PINC0));                                //wait for start bit
+  half_clock_delay_R_upload;
+  
+  for (int n= 0; n <= 7; n++){clock_delay_R_upload;
+    if (PINC & (1 << PINC0)){data_byte_R |= (1 << n); parity += 1;}
+    }
+clock_delay_R_upload;    
+ if ((PINC & (1 << PINC0)) && (parity%2)); 
+ //else sendChar('P');                                        //Parity often received in error?????
+  
+ clock_delay_R_upload;                                               //stop bit
+ clock_delay_R_upload;                                               //stop bit  
  return data_byte_R;}
