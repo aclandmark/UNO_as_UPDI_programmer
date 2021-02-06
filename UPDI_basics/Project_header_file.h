@@ -6,7 +6,7 @@
 
 
 
-#include "Resources\UNO_AVR_Programmer.h"
+#include "Resources\UNO_UPDI_Programmer.h"
 #include "Resources\Basic_IO_and_Timer_subs.c"
 #include "Resources\ASKII_subroutines.c"
 #include "Resources\UPDI_subroutines.c"
