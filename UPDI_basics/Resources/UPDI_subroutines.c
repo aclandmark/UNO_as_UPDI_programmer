@@ -268,7 +268,7 @@ UART_Tx_upload(0x55);
 UART_Tx_upload(setup_repeat_op);
 UART_Tx_upload(block_SZ);
 Prog_delay;	
-
+Timer_T0_sub(T0_delay_5ms);												//Long delay here is OK
 
 UART_Tx_upload(0x55);
 UART_Tx_upload(ST | inc_byte_ptr);
