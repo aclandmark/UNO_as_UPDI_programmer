@@ -13,6 +13,7 @@
 #include "Resources_UPDI_programmer_V2\Hex_Programmer_subs.c"
 #include "Resources_UPDI_programmer_V2\Hex_Programmer.c"
 #include "Resources_UPDI_programmer_V2\UPDI_subroutines.c"
+#include "Resources_UPDI_programmer_V2\verify_flash.c"
 
 
 #define delay_of_0_25uS             asm("nop"); asm("nop"); asm("nop"); asm("nop");
