@@ -94,39 +94,37 @@ UART_Tx(txt2bin(key_h,key_l));}}
 
 /**********************************************************************************************************/
 void Write_page_to_NVM(int PA){			//PA is page address  Interrupts enabled
-PA += 0x8000;
+PA = (PA * 2) + 0x8000;				//Convert cmd address to byte address
 cli();
 UART_Tx_upload(0x55);
-UART_Tx_upload(STS | int_data);				//UART_Tx(0x45);	//
+UART_Tx_upload(STS | int_data);				
 UART_Tx_upload(NVMCTRL_ADDR_reg);
 UART_Tx_upload(NVMCTRL_ADDR_reg >> 8);
 UART_Rx_upload();
 sei();
-Prog_delay_upload;	//Timer_T0_sub(T0_delay_40us);				//200
+Prog_delay_upload;	
 cli();
 UART_Tx_upload(PA);
 UART_Tx_upload(PA >> 8);
 UART_Rx_upload();
 sei();
-Prog_delay_upload;	//Timer_T0_sub(T0_delay_40us);				//200
+Prog_delay_upload;	
 
-
-//Read_NVM_Reg(NVMCTRL_ADDR_reg, 'I');
 sendChar('*');
+
 cli();
 UART_Tx_upload(0x55);
-UART_Tx_upload(STS | byte_data);				//UART_Tx(0x44);
+UART_Tx_upload(STS | byte_data);	
 UART_Tx_upload(NVMCTRL_CTRLA);
 UART_Tx_upload(NVMCTRL_CTRLA >> 8);
 UART_Rx_upload();
 sei();
-Prog_delay_upload;	//Timer_T0_sub(T0_delay_40us);				//200
+Prog_delay_upload;	
 cli();
 UART_Tx_upload(WP_cmd);
 UART_Rx_upload();
 sei();
 Timer_T0_sub(T0_delay_5ms);
-//Flash_flag = 0;
 }
 
 
@@ -245,23 +243,18 @@ Timer_T0_sub(T0_delay_200us);}}
 
 
 /**********************************************************************************************************/
-void cmd_to_page_buffer(int flash_data, int add_in_flash){//Subroutine NOT used
+void cmd_to_page_buffer(int flash_data, int add_in_flash){//UPDI_cmd_to_page_buffer() usually used instead
 UART_Tx(0x55);
 UART_Tx(STS | int_data);
 UART_Tx(add_in_flash);
 UART_Tx(add_in_flash >> 8);
 UART_Rx();
-Prog_delay;	//Timer_T0_sub(T0_delay_40us);
+Prog_delay;	
 UART_Tx(flash_data >> 8);
 UART_Tx(flash_data);
 UART_Rx();
-Prog_delay;	//Timer_T0_sub(T0_delay_40us);
+Prog_delay;	
 }
-
-
-
-/**********************************************************************************************************/
-
 
 
 
@@ -270,9 +263,12 @@ Prog_delay;	//Timer_T0_sub(T0_delay_40us);
 /**********************************************************************************************************/
 void inititalise_UPDI_cmd_write(int add_in_flash){
 
-unsigned char block_SZ = 64;//63;
+unsigned char block_SZ = 64;
 
-add_in_flash += 0x8000;
+
+//sendHex(16, add_in_flash); 
+
+add_in_flash = (add_in_flash * 2) + 0x8000;
 
 cli();
 UART_Tx_upload(0x55);
@@ -297,28 +293,22 @@ sei();}
 
 
 
-
+/**********************************************************************************************************/
 void UPDI_cmd_to_page_buffer(void){
 
 get_next_hex_cmd();
 
-cli();																														
-UART_Tx_upload(Hex_cmd >> 8);
-UART_Rx_upload();
-sei();
-Prog_delay_upload;
-cli();
-
+cli();	
 UART_Tx_upload(Hex_cmd);
 UART_Rx_upload();
-//if( UART_Rx_upload() == 0x40);sendChar('A');
+sei();						//CHANGE NOT NEEDED
+Prog_delay_upload;Prog_delay_upload;
+cli();
+UART_Tx_upload(Hex_cmd >> 8);
+UART_Rx_upload();
+
+
+Prog_delay_upload;Prog_delay_upload;
 sei();
-
-Prog_delay_upload;
-//prog_counter += 1;
-
-//sendChar('B');
-
-
 
 }
