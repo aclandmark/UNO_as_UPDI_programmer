@@ -77,8 +77,10 @@ read_out_fuses();}
 
 sendString("\r\nProgram flash? Y or N");
 if (waitforkeypress() == 'Y')
-{Program_Flash_Hex();}
-//Verify_Flash_Hex();
+{
+  sendString("\r\nSend file");
+  Program_Flash_Hex();
+Verify_Flash_Hex();}
 
 
  while(1);                                                //Wait for UNO reset
@@ -94,7 +96,7 @@ ISR(TIMER1_OVF_vect) {UPDI_timeout = 1;TCCR1B = 0;}
 
 
 /***********************************************************************************************/
-void UART_Tx(int data_byte_T){                          //starts Hi Z
+void UART_Tx(unsigned int data_byte_T){                          //starts Hi Z
   unsigned char parity = 0;
   DDRC |= (1 << DDC0);                                  //start bit
   clock_delay_T;
@@ -121,7 +123,9 @@ unsigned char UART_Rx(void){
     char parity = 0;
                           
   while (PINC & (1 << PINC0));                                //wait for start bit
-  half_clock_delay_R;
+  //half_clock_delay_R;
+  clock_delay_R;
+
   
   for (int n= 0; n <= 7; n++){clock_delay_R;
     if (PINC & (1 << PINC0)){data_byte_R |= (1 << n); parity += 1;}
@@ -138,7 +142,7 @@ clock_delay_R;
 
 
 /************************************************************************************************************************/
- void UART_Tx_upload(int data_byte_T){                          //starts Hi Z
+ void UART_Tx_upload(unsigned int data_byte_T){                          //starts Hi Z
   unsigned char parity = 0;
   DDRC |= (1 << DDC0);                                  //start bit
   clock_delay_T_upload;
