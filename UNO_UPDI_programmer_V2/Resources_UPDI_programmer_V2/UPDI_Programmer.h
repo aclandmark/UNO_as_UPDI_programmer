@@ -46,9 +46,9 @@
 
 
 
-void UART_Tx(int);
-unsigned char UART_Rx(void);
-void UART_Tx_upload(int);
+void UART_Tx(unsigned int);
+unsigned char UART_Rx(void);//char
+void UART_Tx_upload(unsigned int);
 unsigned char UART_Rx_upload(void);
 
 
@@ -59,7 +59,7 @@ void Write_page_to_NVM(int);
 void Read_add_of_last_page(void);
 
 
-int read_flash(int);
+unsigned int read_flash(int);
 void write_fuse(int, unsigned char);
 void read_out_fuses(void);
 void read_out_signature_bytes(void);
@@ -122,7 +122,7 @@ void Program_Flash_Hex (void);
 
 	
 unsigned int  cmd_counter;											//Counts commands as they are downloaded from the PC
-unsigned int prog_counter;											//Counts commands burned to flash
+volatile unsigned int prog_counter;											//Counts commands burned to flash
 unsigned int  read_ops=0;										//Total number of commands read from flash
 volatile int counter;										//Counts characters in a record as they are downloded from the PC
 volatile int char_count;									//The number of askii character in a single record
@@ -159,8 +159,8 @@ unsigned char  op_code;
 
 char User_response;
 
-signed int PageSZ = 0x40;										//Size of a page of flash in 16 bit words
-signed int PAmask = 0x1FC0;										//Used to obtain the flash page address from the hex address
+signed int PageSZ = 0x20;										//Size of a page of flash in 16 bit words
+signed int PAmask = 0x1FE0;										//Used to obtain the flash page address from the hex address
 unsigned int FlashSZ = 0x2000;									//Amount of flash memory in 16 bit words supplied on target device
 
 
@@ -171,9 +171,9 @@ setup_watchdog;\
 ADMUX |= (1 << REFS0);\
 initialise_IO;\
 \
-USART_init(0,51);
+USART_init(0,102);
 
-//USART_init(0x3,0x40);
+//USART_init(0x3,0x40); 0,51
 
 /************************************************************************************************************************************/
 #define wdr()  __asm__ __volatile__("wdr")
@@ -205,7 +205,7 @@ Timer_T0_sub(T0_delay_200us);
 
 /************************************************************************************************************************************/
 #define Initialise_variables_for_programming_flash \
-prog_counter=0;  prog_led_control = 0; cmd_counter = 0; record_length_old=0;\
+prog_counter=0;  prog_led_control = 0; cmd_counter = 0; record_length_old = 0x10;\
 Flash_flag = 0;  HW_address = 0;  section_break = 0; orphan = 0;\
 w_pointer = 0; r_pointer = 0; short_record=0;\
 counter = 0;
