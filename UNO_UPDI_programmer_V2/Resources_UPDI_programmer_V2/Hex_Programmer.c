@@ -79,43 +79,44 @@ start_new_code_block();												//Initialise new programming block (usually s
 Program_record();													//Copy commands from array "store" to the page_buffer                            
       
     
-while(1){   
+while(1){   //sendChar('C');
 new_record();														//Continue reading subsequent records
 if (record_length==0)break;											//Escape when end of hex file is reached
 
 
-if (Hex_address == HW_address){										//Normal code: Address read from hex file equals HW address and lines contains 8 commands
+if (Hex_address == HW_address){									//Normal code: Address read from hex file equals HW address and lines contains 8 commands
 switch(short_record){
 case 0: if (space_on_page == (PageSZ - line_offset))				//If starting new page
-      {page_address = (Hex_address & PAmask);}						//get new page address
-      break;
+      {page_address = (Hex_address & PAmask);						//get new page address
+      inititalise_UPDI_cmd_write(page_address);}					//Re-initialise UPDI
+	  break;
 
 case 1: start_new_code_block();										//Short line with no break in file (often found in WinAVR hex files).
     short_record=0;break;}}
     
     
-//if(Hex_address != HW_address){										//Break in file
-//  if (section_break){												//Section break: always found when two hex files are combined into one                    
-//    if((Flash_flag) && (!(orphan)))
-//    {write_page_SUB(page_address);}									//Burn contents of the partially full page buffer to flash
-//  if(orphan) 
-//    write_page_SUB(page_address + PageSZ);}							//Burn outstanding commands to the next page in flash     
+if(Hex_address != HW_address){										//Break in file
+  if (section_break){												//Section break: always found when two hex files are combined into one                    
+    if((Flash_flag) && (!(orphan)))
+    {write_page_SUB(page_address);}									//Burn contents of the partially full page buffer to flash
+  if(orphan) 
+    write_page_SUB(page_address + PageSZ);}							//Burn outstanding commands to the next page in flash     
     
-//  if(page_break)													//In practice page breaks and short jumps are rarely if ever found                      
-//    {if((Flash_flag) && (!(orphan)))								//Burn contents of the partially filled page buffer to flash
-//    {write_page_SUB(page_address);}                           
-//    orphan = 0;}
+  if(page_break)													//In practice page breaks and short jumps are rarely if ever found                      
+    {if((Flash_flag) && (!(orphan)))								//Burn contents of the partially filled page buffer to flash
+    {write_page_SUB(page_address);}                           
+    orphan = 0;}
     
-// start_new_code_block();											//A new code block is always required where there is a break in the hex file.
-//  short_record=0;}
+ start_new_code_block();											//A new code block is always required where there is a break in the hex file.
+  short_record=0;}
     
 Program_record();}													//Continue filling page_buffer
     
 
 cli();  
-UCSR0B &= (~(1<<RXCIE0));											//download complete, disable UART Rx interrupt
+UCSR0B &= (~(1<<RXCIE0));										//download complete, disable UART Rx interrupt
 //LEDs_off;       
-while(1){if (isCharavailable(1)==1)receiveChar();
+while(1){if (isCharavailable(10)==1)receiveChar();
     else break;}													//Clear last few characters of hex file
   
 //if((Flash_flag) && (!(orphan)))
