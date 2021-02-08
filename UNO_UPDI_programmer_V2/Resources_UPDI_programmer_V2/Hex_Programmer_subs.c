@@ -61,15 +61,18 @@ In the past it has usually been assigned 32 integers and this practice is contin
 **********************************************************************************************************************/
 void new_record(void);
 void start_new_code_block(void);
+void start_new_code_block(void);
 void Program_record(void);
 void copy_cmd_to_page_buffer(void);
 void get_next_hex_cmd(void);
 void write_page_SUB(int);
 
-unsigned char Read_write_mem(char, int, char);
-void Load_page(char, int, unsigned char);
+//unsigned char Read_write_mem(char, int, char);
+//void Load_page(char, int, unsigned char);
 
-
+void inititalise_UPDI_cmd_write(int);
+void UPDI_cmd_to_page_buffer(void);
+void Write_page_to_NVM(int);
 
 
 /**********************************************************************************************************/
@@ -108,12 +111,13 @@ else{if (Hex_address == 0);												//Start of hex file: address is zero
 void start_new_code_block(void){
 HW_address = Hex_address;												//Initialise HW_address
 page_address = (Hex_address & PAmask);									//Obtain page address
-write_address = Hex_address - page_address;								//Initialise write_address: zero to Page size -1
+write_address = Hex_address;// - page_address;								//Initialise write_address: zero to Page size -1
 page_offset = write_address;											//"page_offset" is the initial value of "write_address"											
 line_offset = Hex_address & 0x0007;										//Not all lines start with addresses that are multiples of 8
-space_on_page = (PageSZ - page_offset);}								//Initialise "space_on_page"
+space_on_page = (PageSZ - page_offset);								//Initialise "space_on_page"
 
-
+inititalise_UPDI_cmd_write(page_address);
+}
 
 
 
@@ -124,12 +128,14 @@ while(Count_down){ 														//Initially contains the number of commands in 
 Count_down--;															//Decrement "count_down" each time a command is written to the page buffer
 Flash_flag = 1;  														//Indicates that page buffer contains commands that will need burning to flash 
 //////copy_cmd_to_page_buffer();  												 
+UPDI_cmd_to_page_buffer();
 write_address++;
 HW_address++;
 space_on_page--;
-prog_counter++;       
+prog_counter += 1;       
 if (write_address == PageSZ){											//If page_buffrer is now full:
 /////////Read_write_mem('W', page_address, 0x0);									//Burn contents of page buffer to flash
+Write_page_to_NVM(page_address);
 Flash_flag = 0;															//Buffer now contains no data to burn to flash
 write_address = 0;														//"while loop" continues if there is a line offset
 space_on_page = PageSZ;
@@ -158,7 +164,7 @@ inc_r_pointer;}
 
 /**********************************************************************************************************/
 void write_page_SUB(signed int page_address){ 
-Read_write_mem('W',  page_address, 0x0);
+//Read_write_mem('W',  page_address, 0x0);
 Flash_flag = 0;}
 
 
