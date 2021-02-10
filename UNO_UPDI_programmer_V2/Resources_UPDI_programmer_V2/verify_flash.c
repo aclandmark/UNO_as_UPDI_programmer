@@ -32,13 +32,6 @@ binUnwantedChars();
 print_line = askiX2_to_hex(skip_lines);
 sendHex (16,print_line); sendString("   ");
 
-/*if (print_line == 0);												//hex file print out not required
-else {sendString("1/2?\r\n");										//else -1- sends file as askii, -2- sends it as hex
-print_out_mode =  waitforkeypress(); 
-binUnwantedChars();     
-newline();}*/
-
-//print_line = 40;
 
 
 while(1){ if(!(prog_counter_mem))break;								//print out loop starts here, exit when finished
@@ -49,18 +42,19 @@ Hex_cmd = read_flash(phys_address);
 phys_address += 2;        
 if (phys_address == FlashSZ)break;									//No more memory? Quit if yes
 if (Hex_cmd != 0xFFFF) break;										//If the hex command is 0xFFFF remain in this loop otherwise exit.
-//LEDs_on;
+
 }
 
-//LEDs_off;
+
 if (phys_address == FlashSZ)break;									//Exit when there is no more flash to read
 
 if ((print_line == 0)  && (!(line_no%10)))
 sendChar('*');														//Print out of hex file not required
 																	//Print a -*- every tenth line of the file
 if(print_line && (!(line_no%print_line)))							//Print out required: Print all lines or just a selection     
-{newline(); sendHex (16, ((phys_address-2)-0x8000));   
-sendString("   "); line_counter++;  
+{sendString("\r"); 
+sendHex (16, ((phys_address-2)-0x8000));   
+sendString(" "); line_counter++;  
 
 sendHex (16, Hex_cmd);}										//Print first command in askii or hex
 read_ops += 1;															//Value to be sent to PC for comparison with the hex filer size
@@ -74,7 +68,6 @@ phys_address += 2;
 if(Hex_cmd == 0xFFFF)break;											//Read 0xFFFF: return to start of print out loop
 prog_counter_mem -= 1;
 
-//if ((print_line) &&  (!(line_counter%2))) {LEDs_on;} else {LEDs_off;}              
 
 if(print_line && (!(line_no%print_line)))
 
@@ -83,25 +76,23 @@ sendHex (16, Hex_cmd);
 read_ops += 1;
 
 if(phys_address==FlashSZ)break;}
-if ((print_line)&&(!(line_no%print_line)) && (!(line_counter%8)))sendString("\r\n");
+if ((print_line)&&(!(line_no%print_line)) && (!(line_counter%8)))sendString("\r");
 line_no++;
 if (phys_address == FlashSZ)break;}
 
-//LEDs_off;
+
 newline(); 
 
 sendString("\r\nHex_file_size:  ");
-//sendHex(10,cmd_counter); sendString("  d'loaded:  "); 
 sendHex(10,prog_counter); sendString(" in:  "); 
 sendHex(10,read_ops); sendString(" out\r\n");
 
-//Verify_config_bytes;
 newline();}
 
 
 
 
-void Verify_Flash_Hex_basic (void){			//DOES WHOLE LIES ONLY
+void Verify_Flash_Hex_basic (void){			//DOES WHOLE LINES ONLY
 
 
 int  line_counter = 0, print_line = 0;								//Controls printing of hex file                         
