@@ -4,7 +4,7 @@
 int main (void){ 
 char kepress;
 setup_328_HW;                                                     //see "Resources\ATMEGA_Programmer.h"
-
+P_counter = 0;
 User_prompt;
 
 sendString("\r\nUPDI development program:  POR required to reset UPDI:  AK to start\r\n");
@@ -46,7 +46,7 @@ for(int m = 0; m <= 15;m++){
     sendString("\tFamily name, NVM version, OCD version, DGB_OSC frequency setting.");
     sendString("\r\n-x- to continue, AOK to repeat.\r\n");
     kepress = waitforkeypress();}while(kepress != 'x');
-
+newline();sendHex(10, P_counter);///////////////////////////////////////
 
 //while(1){
 /*****************************Get ready to program to flash*********************************************/
@@ -62,7 +62,7 @@ read_out_signature_bytes();
 newline();
 sendString("\r\nFuse bytes:\t");
 read_out_fuses();
-
+newline();sendHex(10, P_counter);/////////////////////////////////////////////////////
 /**************************Set fuses to user values*************************************************/
 sendString("\r\n\r\nUpdate SYSCFG0 and SYSCFG1 for 16mS SUT and ");
 sendString("\r\nEEprom preserved at chip erase");
@@ -73,16 +73,18 @@ write_fuse (0x1286, 0xFD);          //16ms SUT
 sendString("\r\n\r\nNew fuse bytes:\t");
 read_out_fuses();}
 
-
+newline();
+sendHex(10, P_counter);//////////////////////////////////////////////
 
 sendString("\r\nProgram flash? Y or N");
 if (waitforkeypress() == 'Y')
 {
   sendString("\r\nSend file");
   Program_Flash_Hex();
-Verify_Flash_Hex();}
+Verify_Flash_Hex();
+}
 
-
+newline();sendHex(10, P_counter);
  while(1);                                                //Wait for UNO reset
 return 1;}
 
@@ -123,19 +125,21 @@ unsigned char UART_Rx(void){
     char parity = 0;
                           
   while (PINC & (1 << PINC0));                                //wait for start bit
-  //half_clock_delay_R;
-  clock_delay_R;
-
   
+// half_clock_delay_R;                                        //The full delay is required
+   clock_delay_R; 
   for (int n= 0; n <= 7; n++){clock_delay_R;
     if (PINC & (1 << PINC0)){data_byte_R |= (1 << n); parity += 1;}
     }
-clock_delay_R;    
+
+clock_delay_R;
+
  if ((PINC & (1 << PINC0)) && (parity%2)); 
  //else sendChar('P');                                        //Parity often received in error?????
-  
- clock_delay_R;                                               //stop bit
- clock_delay_R;                                               //stop bit  
+ else P_counter++; 
+ 
+ clock_delay_R;                                             //stop bit
+ clock_delay_R;                                           //stop bit  
  return data_byte_R;}
 
 
@@ -169,14 +173,14 @@ unsigned char UART_Rx_upload(void){
     char parity = 0;
                           
   while (PINC & (1 << PINC0));                                //wait for start bit
-  half_clock_delay_R_upload;
-  
+  //half_clock_delay_R_upload;
+  clock_delay_R_upload;
   for (int n= 0; n <= 7; n++){clock_delay_R_upload;
     if (PINC & (1 << PINC0)){data_byte_R |= (1 << n); parity += 1;}
     }
-clock_delay_R_upload;    
+clock_delay_R_upload;                                           
  if ((PINC & (1 << PINC0)) && (parity%2)); 
- //else sendChar('P');                                        //Parity often received in error?????
+ else sendChar('P');                                        //Parity often received in error?????
   
  clock_delay_R_upload;                                               //stop bit
  clock_delay_R_upload;                                               //stop bit  
