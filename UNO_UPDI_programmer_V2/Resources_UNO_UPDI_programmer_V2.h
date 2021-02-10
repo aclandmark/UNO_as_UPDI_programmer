@@ -22,14 +22,19 @@
 #define out_l                       PORTC &= (~(1 << PORTC0))
 
 
-#define clock_delay_T               Timer_T0_sub(T0_delay_20us) 
-#define clock_delay_R               Timer_T0_sub(T0_delay_20us)
-#define half_clock_delay_R          Timer_T0_sub(T0_delay_10us)
+#define clock_delay_T               Timer_T0_sub(T0_delay_18us) 
+#define clock_delay_R               Timer_T0_sub(T0_delay_18us) 
+#define half_clock_delay_R          Timer_T0_sub(T0_delay_9us)
 
-
+/*  These work
+#define clock_delay_T_upload         Timer_T0_sub(T0_delay_10us) OK
+#define clock_delay_R_upload         Timer_T0_sub(T0_delay_11us) OK
+#define half_clock_delay_R_upload    Timer_T0_sub(T0_delay_5_5us) NOT NEEDED
+*/
 #define clock_delay_T_upload         Timer_T0_sub(T0_delay_10us) 
 #define clock_delay_R_upload         Timer_T0_sub(T0_delay_11us)
-#define half_clock_delay_R_upload    Timer_T0_sub(T0_delay_5_5us)
+
+
 
 #define input_h                     (PINC & (1 << PINC0))
 #define input_l                     (!(PINC & (1 << PINC0)))
