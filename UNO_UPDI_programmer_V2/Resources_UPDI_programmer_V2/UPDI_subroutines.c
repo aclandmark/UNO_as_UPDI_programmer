@@ -124,7 +124,9 @@ cli();
 UART_Tx_upload(WP_cmd);
 UART_Rx_upload();
 sei();
-Timer_T0_sub(T0_delay_5ms);
+//Timer_T0_sub(T0_delay_5ms);
+Timer_T0_sub(T0_delay_3ms);
+
 }
 
 
