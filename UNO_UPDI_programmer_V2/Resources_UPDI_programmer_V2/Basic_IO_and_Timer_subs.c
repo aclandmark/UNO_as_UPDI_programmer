@@ -46,6 +46,8 @@ void Timer_T0_10mS_delay_x_m(int m)
 
 /**********************************************************************************************/
 void Timer_T0_sub(char Counter_speed, unsigned char Start_point){ 
+
+GTCCR | (1 << PSRSYNC);
 TCNT0 = Start_point;
 TCCR0B = Counter_speed;
 while(!(TIFR0 & (1<<TOV0)));
