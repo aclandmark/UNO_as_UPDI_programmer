@@ -41,13 +41,13 @@ volatile int P_counter;
 #define setup_repeat_op				0xA0
 
 
-#define Prog_delay            		Timer_T0_sub(T0_delay_30us)			//30 ok
+#define Prog_delay            		Timer_T0_sub(T0_delay_30us)	
 #define Prog_delay_upload			Timer_T0_sub(T0_delay_30us)	
 
 
 
 void UART_Tx(unsigned int);
-unsigned char UART_Rx(void);//char
+unsigned char UART_Rx(void);
 void UART_Tx_upload(unsigned int);
 unsigned char UART_Rx_upload(void);
 
@@ -90,8 +90,6 @@ void upload_hex(void);
 void Program_Flash_Hex (void);
 
 
-//Based on 16MHz clock
-
 #define T0_delay_2us	1, 224
 #define T0_delay_2_5us	1, 216
 #define T0_delay_4us	1, 192
@@ -129,9 +127,9 @@ void Program_Flash_Hex (void);
 
 
 	
-unsigned int  cmd_counter;											//Counts commands as they are downloaded from the PC
-volatile unsigned int prog_counter;											//Counts commands burned to flash
-unsigned int  read_ops=0;										//Total number of commands read from flash
+unsigned int  cmd_counter;									//Counts commands as they are downloaded from the PC
+volatile unsigned int prog_counter;							//Counts commands burned to flash
+unsigned int  read_ops=0;									//Total number of commands read from flash
 volatile int counter;										//Counts characters in a record as they are downloded from the PC
 volatile int char_count;									//The number of askii character in a single record
 volatile unsigned char Count_down;							//Counts commands as record is programmed
@@ -140,10 +138,10 @@ int store[64];												//Used to store commands and address ready for the pro
 volatile unsigned char w_pointer,r_pointer;					//Read/write pointers to "store" to which hex file is saved
 unsigned int Hex_cmd;										//Command read from flash during verification
 
-unsigned int Hex_address;											//Address read from the hex file
-unsigned int HW_address;												//Hard ware address (usually tracks Hex_address)
+unsigned int Hex_address;									//Address read from the hex file
+unsigned int HW_address;									//Hard ware address (usually tracks Hex_address)
 unsigned int page_address;									//Address of first location on a page of flash 
-volatile unsigned int write_address;									//Address on page_buffer to which next command will be written
+volatile unsigned int write_address;						//Address on page_buffer to which next command will be written
 
 signed char short_record;									//Record  containing less that eight 16 bit commands
 unsigned char page_offset;									//Address of first location on page buffer to be used
@@ -167,9 +165,9 @@ unsigned char  op_code;
 
 char User_response;
 
-signed int PageSZ = 0x20;										//Size of a page of flash in 16 bit words
-signed int PAmask = 0x1FE0;										//Used to obtain the flash page address from the hex address
-unsigned int FlashSZ = 0x2000;									//Amount of flash memory in 16 bit words supplied on target device
+signed int PageSZ = 0x20;									//Size of a page of flash in 16 bit words
+signed int PAmask = 0x1FE0;									//Used to obtain the flash page address from the hex address
+unsigned int FlashSZ = 0x2000;								//Amount of flash memory in 16 bit words supplied on target device
 
 
 /************************************************************************************************************************************/
@@ -181,11 +179,10 @@ initialise_IO;\
 \
 USART_init(0,102);
 
-//UUSART_init(0,102);   68 ok
+
 
 /************************************************************************************************************************************/
 #define wdr()  __asm__ __volatile__("wdr")
-
 
 
 #define setup_watchdog \
@@ -248,8 +245,9 @@ PORTC = 0xFE;\
 PORTD = 0xFF;
 
 //PORTC0 stays as Hi Z inputput
-#define Config_Xtal_port \
-ASSR = (1 << AS2);	
+
+
+
 
 /************************************************************************************************************************************/
 #define User_prompt \
