@@ -1,5 +1,5 @@
 
-
+volatile int P_counter;
 
 
 
@@ -100,22 +100,30 @@ void Program_Flash_Hex (void);
 #define T0_delay_5_5us	1, 168
 #define T0_delay_8us	1, 128
 #define T0_delay_8_5us	1, 120
+#define T0_delay_9us	1, 112
 #define T0_delay_10us	1, 96
 #define T0_delay_11us	1, 80
+#define T0_delay_12_5us	1, 56
 #define T0_delay_15us	1, 16
+#define T0_delay_18us	2, 220
 #define T0_delay_20us 	2, 216
+#define T0_delay_22us 	2, 212
 #define T0_delay_30us 	2, 196
 #define T0_delay_40us 	2, 176
+#define T0_delay_44us 	2, 168
 #define T0_delay_100us	2,56
 #define T0_delay_200us 3, 206
 #define T0_delay_400us 3, 156
 
-#define T0_delay_2ms 4,131
-#define T0_delay_5ms 5,178
-#define T0_delay_10ms 5,100
+
+#define T0_delay_2ms 	4,131
+#define T0_delay_2_5ms 	4,100
+#define T0_delay_3ms 	4,68
+#define T0_delay_5ms 	5,178
+#define T0_delay_10ms 	5,100
 
 #define T1_delay_500ms 4,32768
-#define T1_delay_1Sec 4,0
+#define T1_delay_1Sec 	4,0
 
 
 
@@ -173,7 +181,7 @@ initialise_IO;\
 \
 USART_init(0,102);
 
-//USART_init(0x3,0x40); 0,51
+//UUSART_init(0,102);   68 ok
 
 /************************************************************************************************************************************/
 #define wdr()  __asm__ __volatile__("wdr")
