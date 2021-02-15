@@ -90,6 +90,13 @@ Local_r_pointer = r_pointer;
 Hex_address  =  (store[Local_r_pointer]); 								//Get the address of the first command in the new record
 inc_r_pointer;  														//Increment the read pointer
 Hex_address  = Hex_address/2;											//Convert address from byte to word value
+
+record_type_old = record_type;
+
+if(Hex_address%0x8) record_type = 1;
+else record_type = 0;
+
+
 prog_led_control++;
 
 if (Hex_address == HW_address)orphan = 0;								//New record follows on immediately from the old
@@ -140,8 +147,12 @@ Flash_flag = 0;															//Buffer now contains no data to burn to flash
 write_address = 0;														//"while loop" continues if there is a line offset
 space_on_page = PageSZ;
 page_offset = line_offset;
-if (line_offset) orphan = 1;}}}											//One or more commands in current record will be on next page
+if (line_offset) orphan = 1;												//One or more commands in current record will be on next page
+if (record_type){
+if (!(orphan))inititalise_UPDI_cmd_write(page_address);///For orphan UPDATE NEXT PAGE
+else inititalise_UPDI_cmd_write(page_address + 0x20);}
 
+}}}
 
 
 /**********************************************************************************************************/
