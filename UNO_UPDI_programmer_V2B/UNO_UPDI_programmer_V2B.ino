@@ -189,13 +189,5 @@ void UART_Tx_break_upload(void){                                          //star
 Timer_T0_sub(T0_delay_30us);
 
 sendChar('Y');}
-
-
- void UART_Tx_break(void){                                          //starts Hi Z
-  DDRC |= (1 << DDC0);                                                    //start bit
-  for (int n = 0; n <= 15; n++){clock_delay_T;}                    //Hold low for all 12 bits
-  DDRC &= (~(1 << DDC0));                                                 //Restore Hi Z
-Timer_T0_sub(T0_delay_200us);
-
-sendChar('Y');}
+ 
   
