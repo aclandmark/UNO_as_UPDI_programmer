@@ -64,15 +64,10 @@ w_pointer = w_pointer & 0b00111111; }								//Overwrites array after 32 entries
 /*****************************************************************************************************************/
 void Program_Flash_Hex (void){
 char keypress;
-int test_cmd;
-
-//while ((keypress = waitforkeypress()) != ':')						//Ignore characters before the first ':'
-//{if (keypress == 'x'){SW_reset;}}									//X pressed to escape
 
 Initialise_variables_for_programming_flash;
 
 UCSR0B |= (1<<RXCIE0); sei();										//Set UART Rx interrupt
-//(Atmel_config(Chip_erase_h, 0));									//Erase chip after first char of hex file has been received
 
 
 new_record();														//Start reading first record which is being downloaded to array "store" 
@@ -81,7 +76,7 @@ inititalise_UPDI_cmd_write(page_address);
 Program_record();													//Copy commands from array "store" to the page_buffer                            
       
     
-while(1){   //sendChar('C');
+while(1){   
 new_record();														//Continue reading subsequent records
 if (record_length==0)break;											//Escape when end of hex file is reached
 
@@ -90,8 +85,9 @@ if (Hex_address == HW_address){									//Normal code: Address read from hex fil
 switch(short_record){
 case 0: if (space_on_page == (PageSZ - line_offset))				//If starting new page
       {page_address = (Hex_address & PAmask);						//get new page address
-      inititalise_UPDI_cmd_write(page_address);}					//Re-initialise UPDI
-	  break;
+      if(!(Hex_address%0x20))
+	  {inititalise_UPDI_cmd_write(page_address);						//Re-initialise UPDI
+	  	  }}break;
 
 case 1: start_new_code_block();										//Short line with no break in file (often found in WinAVR hex files).
     short_record=0;break;}}
@@ -115,29 +111,47 @@ if(Hex_address != HW_address){										//Break in file
 Program_record();}													//Continue filling page_buffer
     
 
+newline();
+sendHex(16,record_type_old  );
+sendHex(16, Flash_flag );
+sendHex(16,orphan  );
+
+
   
 cli();UCSR0B &= (~(1<<RXCIE0));										//download complete, disable UART Rx interrupt
-//LEDs_off;       
+       
 while(1){if (isCharavailable(10)==1)receiveChar();
     else break;}													//Clear last few characters of hex file
 
-
-/*******break statements********/
-UART_Tx_upload(0x55);
-UART_Tx_upload(0x45);
-UART_Tx_upload(00);					//Generate UPDI crash before issuing break
-UART_Tx_upload(0x80);
-UART_Tx_upload(0x55);
-Timer_T0_sub(T0_delay_200us);
-UART_Tx_break_upload();
-/*******************************/
-
-
 UCSR0B |= (1<<RXCIE0); sei();
+
+
+if(record_type_old)
+{ 
+if((!(Flash_flag)) && (orphan))
+{UART_Tx_break_upload();write_page_SUB(page_address);}
+
+if((Flash_flag) && (orphan)){sendChar('g');
+UART_Tx_break_upload();
+write_page_SUB(page_address + 0x20);}/////////////
+
+
+if((Flash_flag) && (!(orphan))){
+UART_Tx_break_upload();
+write_page_SUB(page_address);}
+
+
+}
+
+
+if(!(record_type_old)){
   
-if((Flash_flag) && (!(orphan)))
-{UART_Tx_break_upload();
-write_page_SUB(page_address);}										 //Burn final contents of page_buffer to flash
+if((Flash_flag) && (!(orphan))){
+UART_Tx_break_upload();
+write_page_SUB(page_address);}	
+}
+
+
 //if(orphan) {write_page_SUB(page_address + PageSZ);}
 
 cli();UCSR0B &= (~(1<<RXCIE0));
