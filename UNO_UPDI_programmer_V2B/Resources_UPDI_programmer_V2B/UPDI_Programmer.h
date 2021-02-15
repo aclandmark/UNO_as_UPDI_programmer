@@ -51,7 +51,6 @@ unsigned char UART_Rx(void);
 void UART_Tx_upload(unsigned int);
 unsigned char UART_Rx_upload(void);
 void UART_Tx_break_upload(void);
-void UART_Tx_break(void);
 
 void Bin_to_PC(unsigned char);
 void Erase_code (void);
@@ -170,6 +169,8 @@ signed int PageSZ = 0x20;									//Size of a page of flash in 16 bit words
 signed int PAmask = 0x1FE0;									//Used to obtain the flash page address from the hex address
 unsigned int FlashSZ = 0x2000;								//Amount of flash memory in 16 bit words supplied on target device
 
+
+volatile char record_type, record_type_old;
 
 /************************************************************************************************************************************/
 #define setup_328_HW \
