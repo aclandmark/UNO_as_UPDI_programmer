@@ -8,8 +8,7 @@
 #define Restart_clock					TCNT0 = 0; GTCCR |= (1 << PSRSYNC); Start_Tx_clock;
 #define Reset_clock						TCCR0B = 0;	TCNT0 = 0; GTCCR |= (1 << PSRSYNC);
 
-//tx clock ls was 160 but gives poor results 
-//140 is OK
+
 
 #define Tx_clock_LS            	140
 #define Tx_clock            	60
@@ -29,6 +28,15 @@ Reset_clock;\
 Start_Rx_clock;\
 data_byte_Tx = 0x55; \
 transmit_byte;
+
+
+/*
+Definitions used to drive the UART interface for programming flash
+where speed is critical.
+Provide minimum software latency but use a lot of program memory.
+*/
+
+
 
 
 /****************************************************************************************/
@@ -89,7 +97,13 @@ Tx_bit = 1;\
 transmitBit;\
 transmitBit;}
 
+
+
+
 /*****************************************/
+//Inverses the polarity bit to pause UPDI repeat
+//command proir to executing a break command 
+
 #define transmit_byte_P \
 {parity_2 = 0;\
 Tx_bit = 0;\
@@ -107,6 +121,8 @@ transmitBit;\
 Tx_bit = 1;\
 transmitBit;\
 transmitBit;}
+
+
 
 
 /*****************************************/
@@ -169,8 +185,3 @@ data_byte_Tx = 0x01; transmit_byte_LS;\
 Stop_clock;
 
 
-/*
-750 and 500 are almost OK  BEST so far
-Needs Tx_clock_LS     of       	140
-750 and 500 are not critical
-*/
