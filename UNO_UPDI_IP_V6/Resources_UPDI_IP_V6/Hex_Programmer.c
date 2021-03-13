@@ -55,14 +55,14 @@ local_pointer = w_pointer++;
 store[local_pointer] = tempInt1; cmd_counter++;}}
 
 counter++;
-w_pointer = w_pointer & 0b01111111; }								//Overwrites array after 32 entries
+w_pointer = w_pointer & 0b01111111; }								//Overwrites array after 128 entries
 
 
 
 
 
 /*****************************************************************************************************************/
-void Program_Flash_Hex (void){
+void Program_Flash_Hex (void){										//Simplified version of subroutine used for UNO_AVR_Programmer
 char keypress;
 
 Initialise_variables_for_programming_flash;
@@ -72,8 +72,8 @@ UCSR0B |= (1<<RXCIE0); sei();										//Set UART Rx interrupt
 
 new_record();														//Start reading first record which is being downloaded to array "store" 
 start_new_code_block();												//Initialise new programming block (usually starts at address zero but not exclusivle so)
-inititalise_UPDI_cmd_write(page_address);
-Program_record();													//Prepare to copy commands from array "store" to the page_buffer                            
+inititalise_UPDI_cmd_write(page_address);							//Prepare to copy up to 32 commands from array "store" to the page_buffer
+Program_record();													                            
       
     
 while(1){   
@@ -81,7 +81,6 @@ new_record();														//Continue reading subsequent records
 if (record_length==0)break;											//Escape when end of hex file is reached
 
 
-//if (Hex_address == HW_address){										//Normal code: Address read from hex file equals HW address and lines contains 8 commands
 switch(short_record){
 case 0: if (space_on_page == (PageSZ - line_offset))				//If starting new page
       {page_address = (Hex_address & PAmask);						//get new page address
@@ -90,19 +89,14 @@ case 0: if (space_on_page == (PageSZ - line_offset))				//If starting new page
 	  	  }}break;
 
 case 1: start_new_code_block();										//Short line with no break in file (often found in WinAVR hex files).
-    short_record=0;break;}//}
-    
-/*   
-if(Hex_address != HW_address){
-sendString("\r\nBreak in Hex_code encountered.\r\n");
-}*/
+    short_record=0;break;}
     
 Program_record();}	
 
 
 
-newline();																	//Always add cmd 0x0000 at end of file
-sendHex(16, odd_line_length);												//Continue filling page_buffer//
+newline();															//Add cmd 0x0000 at end of file where record contains an odd number of bytes.
+sendHex(16, odd_line_length);										//Continue filling page_buffer//
 if(odd_line_length%2) {
 sendChar('a'); 
 store[w_pointer] = 0x0000;
@@ -110,15 +104,8 @@ w_pointer += 1;
 UPDI_cmd_to_page_buffer();
 prog_counter += 1;
 Flash_flag = 1;
-if ((add_last_cmd + 1)%PageSZ){orphan = 1;}
-}
+if ((add_last_cmd + 1)%PageSZ){orphan = 1;}}
  
-
-
-
-
-
-
 
 cli();UCSR0B &= (~(1<<RXCIE0));									//download complete, disable UART Rx interrupt
 
