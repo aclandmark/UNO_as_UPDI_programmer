@@ -1,64 +1,31 @@
-/**************************************************************************************************
+/*
+This code is closely based on that used for the UNO AVR programmer however it 
+can only be used to down load signle hex files and is therefore rather simpler/ 
 
-Low level subroutines called by subroutine Program_Flash ().  This is called by the main routine
+Where strings are to be stored AVR hex files consist of two sections.  
+The first contains the C code and the second contains the strings.
+The second follows the first with no unused address space between them
+However the code section does not necessarily end with a comlete record
+and the string section always starts on a new record.
+Code records therefore always start with addresses 0000, 0x0010,  0x0020, 0x0030 ......
+String recods can start with any address.
+The hex file is stored in pages and the break between code and strings does not
+necessarily occur at a page boundary. 
 
+Some of the original complexity therefore remains.
 
-WinAVR generates hex files that must be downloaded to the programmer and sorted into addresses and data
-which is then burned into the flash memory.  (Note: The devices use 16 bit commands, but the hex file assumes
-8 bit words.)
-
-Flash memory is programed in blocks called pages.  Each page has space for 64 commands (128 bytes).
-The Atmega168 has 128 pages of flash and the 328 has 256 pages. As they are downloaded hex commands are saved 
-to a page buffer and when this is full its contents are burned to flash.
-
-Programming normally starts at address 0000 the start of the first page. When the page buffer is fully loaded
-and the data it contains has been "burned" to flash the programmer starts filling the buffer again and its contents
-will be burned to the second page that starts at byte address 0x80.
-
-After programming the final address, command 0x3FFF for the Atmega 328 or  0x1FFF for the Atmega 168 
-programming continues at location 0x0000.
-
-The address of a command can be split into that of the page on which it occurs plus its address within the page.
-The address of the page is the address of the first command on the page. For any command with address "Hex_address"
-the page address is given by "Hex_address & PAmask" and the address on the page is given by  "Hex_address - Page_address".
-
-Hex files consist of a number of lines known as records.  Each record starts with a -:- character.  This is followed by
-the number of commands in the record, then the address of the first one and then the commands themselves.
-Note: Hex files and their records are generated using bytes.  However each command consists of two bytes.     
-
-Hex files do not usually fit into an exact number of pages.  There can also be several code sections, for example 
-one starting at location zero and one at the start of the boot partition.
-
-Several variables are therefore required to keep programming on track:
-
-Hex_address:		An address obtained from the hex file; usually the adress of the first command in a line of 8
-HW_address:			This address will track the Hex_Address provided that there are no gaps in the hex file.
-
-Line_length:		This is the number of commands present in a single line of the hex file.
-Line_length_old:	The program needs to know the line length of the current line and the previous one.	
-
-Record:				The hex file is processed by the programmer one line at a time.  Each line is also known as a record.
-
-section_break:		This is set to 1 when at least one page of flash memory will be unused.
-page_break:			This is set to 1 when a page is only partially filled before programming of the next page starts
-orphan:				This is set to 1 when the commands in a record are shared between one page and the next
+In addition it was observed that hex files generated with AVR studio for
+devices using the UPDI can end in lines of odd length. This occurs for
+srings with odd number of characters.  Preiously the compiler added an addditional
+null character at the end of the hex file to ensue that all lines have even length
+i.e. a whole number of 16 bit words to write to flash.
+Without this precaution there was no termination for the final string which 
+continues printing indefinitly.
+*/
 
 
 
-The array store[]:	5mS is allowed for burning the contents of the page buffer to flash.  During this time data continues to
-be received by the UART.  The UART settings are 1 start bit, 8 data bits and 1 stop bit (i.e. 10 bits per askii char).
-The baud rate is 57.6Kb which equates to 5.76 askii chars per mS.  
-Therefore during the 5mS for which "burning" takes place 29 askii characters are received. 
-32 askii chars equates to the hex commands in one line of a hex file which holds 8 16 bit commands
-
-The array store[] must therefore hold at least 8 integers.
-In the past it has usually been assigned 32 integers and this practice is continued here.
-
-
-
-
-
-**********************************************************************************************************************/
+/**********************************************************************************************************************/
 void new_record(void);
 void start_new_code_block(void);
 void start_new_code_block(void);
@@ -101,17 +68,7 @@ else record_type = 0;													//Record never occupies more than one page
 
 
 if (Hex_address == HW_address)orphan = 0;								//New record follows on immediately from the old
-else{if (Hex_address == 0);											//Start of hex file: address is zero
-		/*else{if ((Hex_address & PAmask) > (page_address + PageSZ))		//Long jump: At least one page is unused
-				{section_break=1;page_break=0;sendHex(16,page_address*2);}
-			if((Hex_address & PAmask) == (page_address + PageSZ))		//Page jump: Jump to next page without filling current one
-				{section_break=0;page_break=1; }
-			if ((Hex_address & PAmask) == page_address)				//Short jump: Jump within page
-				{section_break=0;page_break=0; orphan = 0;}}*/
-				
-				}
-
-}  
+else{if (Hex_address == 0);}}											//Start of hex file: address is zero
 
 
 
