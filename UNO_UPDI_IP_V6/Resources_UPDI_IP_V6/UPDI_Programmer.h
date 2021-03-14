@@ -2,22 +2,15 @@
 #define Std_record_length			0x10
 #define half_SRL					0x08
 
-
-//All parameters that may change from device to device: Set for Attiny 1606
-
 signed int PageSZ = 0x20;									//Size of a page of flash in 16 bit words
 signed int PAmask = 0x1FE0;									//Used to obtain the flash page address from the hex address
 unsigned int FlashSZ = 0x2000;								//Amount of flash memory in 16 bit words supplied on target device
 volatile char record_type, record_type_old;
 unsigned char block_SZ = 64;
 
-//What about flash start address??  This has been hard coded to 0x8000 
 
 
 
-
-
-//UPDI addresses and commands (see data sheet for more info)
 
 #define NVMCTRL_CTRLA  				0x1000
 #define Signature_base_address		0x1100
