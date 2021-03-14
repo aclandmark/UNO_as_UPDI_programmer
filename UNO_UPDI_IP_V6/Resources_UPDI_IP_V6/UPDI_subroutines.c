@@ -1,6 +1,4 @@
 
-//All subroutines closely follow the ATtiny data sheet
-
 
 
 void send_key(const char*);
@@ -107,6 +105,7 @@ void write_fuse(int fuse_add, unsigned char value){		//No interrupts enabled her
 
 unsigned int Rx_byte;
 
+//sendHex(16,fuse_add);
 
 UART_Tx(0x55);                              			//Send lock bit address to NVMCTRL.ADD registers
 UART_Tx(STS | byte_data);								                               
@@ -128,6 +127,8 @@ UART_Tx(fuse_add >> 8);
 UART_Rx();                               				//Adddress of lock byte
 Timer_T0_sub(T0_delay_200us);
 
+//Read_NVM_Reg(NVMCTRL_ADDR_reg, 'I');
+
 UART_Tx(0x55);                                			//Send key 0xC5 (device unlocked) to NVMCTRL.DATA register)
 UART_Tx(STS | byte_data);								//UART_Tx(0x44);                                
 UART_Tx(NVMCTRL_DATA_reg);                          	//Adress of NVMCTRL.DATA registers                       
@@ -137,6 +138,8 @@ Timer_T0_sub(T0_delay_200us);
 UART_Tx(value); 
 UART_Rx();
 Timer_T0_sub(T0_delay_200us);
+
+//Read_NVM_Reg(NVMCTRL_DATA_reg, 'B');
 
 UART_Tx(0x55);                                			//Enter write to fuse byte command into NVM.CTRLA register
 UART_Tx(STS | byte_data);								//UART_Tx(0x44);                                
@@ -184,6 +187,7 @@ return (A * 0x10 + B);}
 
 /**********************************************************************************************************/
 void inititalise_UPDI_cmd_write(int add_in_flash){		//Setup repeat command
+//unsigned char block_SZ = 64;
 
 add_in_flash = (add_in_flash * 2) + 0x8000;
 
