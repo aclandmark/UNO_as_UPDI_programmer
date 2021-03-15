@@ -206,7 +206,8 @@ data_byte_Tx = (ST | inc_byte_ptr); transmit_byte;
 
 Stop_clock;
 
-SREG = SREG_BKP;}
+SREG = SREG_BKP;
+}
 
 
 
@@ -227,7 +228,8 @@ Restart_clock;
 data_byte_Tx = (Hex_cmd >> 8); transmit_byte;
 receive_byte; Stop_clock;
 
-SREG = SREG_BKP;}
+SREG = SREG_BKP;
+}
 
 
 
