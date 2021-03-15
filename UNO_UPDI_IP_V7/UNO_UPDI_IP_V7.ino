@@ -2,7 +2,7 @@
  Programming AVR devices with a UPDI interface
  Arduino sketch to be downloaded to a UNO
  Open a terminal program before running the shetch.
- Set terminal to 38400Hz, 8 data bits, 1 stop bits, no parity and no handshaking
+ Set terminal to 28800Hz, 8 data bits, 1 stop bits, no parity and no handshaking
  User prompt R R R..... is generated
  Press R and then respond to the on-screen instructions
  If the "compiled binary file" is exported (see Shetch drop down menue)
