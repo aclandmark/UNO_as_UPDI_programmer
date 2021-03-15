@@ -8,12 +8,12 @@
 #define Restart_clock					TCNT0 = 0; GTCCR |= (1 << PSRSYNC); Start_Tx_clock;
 #define Reset_clock						TCCR0B = 0;	TCNT0 = 0; GTCCR |= (1 << PSRSYNC);
 
+//Clock settings: 64 to 70  are OK  62 and 72 are NOT
 
 
-#define Tx_clock_LS            	140
-#define Tx_clock            	60
-#define Rx_clock            	60
-#define Half_Rx_clock   		30
+#define Tx_clock            	66
+#define Rx_clock            	66
+#define Half_Rx_clock   		33
 
 
 #define input_h                (PINC & (1 << PINC0))
@@ -37,19 +37,9 @@ Provide minimum software latency but use a lot of program memory.
 */
 
 
-
-
-/****************************************************************************************/
-#define transmitBit_LS \
-{while (!(TIFR0 & (1 << OCF0A)));\
-if(Tx_bit){output_h;}\
-else {output_l};\
-TIFR0 = 0xFF;\
-OCR0A +=  Tx_clock_LS;}
-
-
 /*****************************************/
 #define transmitBit \
+\
 {while (!(TIFR0 & (1 << OCF0A)));\
 if(Tx_bit){output_h;}\
 else {output_l};\
@@ -57,30 +47,11 @@ TIFR0 = 0xFF;\
 OCR0A +=  Tx_clock;}
 
 
-/*****************************************/
-#define transmit_byte_LS \
-{parity_2 = 0;\
-Tx_bit = 0;\
- transmitBit_LS;\
-\
-for(int n = 0; n <= 7; n++){\
-(Tx_bit = data_byte_Tx & (1 << n));\
-if(Tx_bit)parity_2 += 1;\
-transmitBit_LS;}\
- \
-if(parity_2%2)Tx_bit = 1;\
-else Tx_bit = 0;\
-transmitBit_LS;\
-\
-Tx_bit = 1;\
-transmitBit_LS;\
-transmitBit_LS;}
-
-
 
 /*****************************************/
 #define transmit_byte \
-{parity_2 = 0;\
+{\
+parity_2 = 0;\
 Tx_bit = 0;\
  transmitBit;\
 \
@@ -95,7 +66,9 @@ transmitBit;\
 \
 Tx_bit = 1;\
 transmitBit;\
-transmitBit;}
+transmitBit;\
+\
+}
 
 
 
@@ -105,7 +78,8 @@ transmitBit;}
 //command proir to executing a break command 
 
 #define transmit_byte_P \
-{parity_2 = 0;\
+{\
+parity_2 = 0;\
 Tx_bit = 0;\
  transmitBit;\
 \
@@ -120,7 +94,8 @@ transmitBit;\
 \
 Tx_bit = 1;\
 transmitBit;\
-transmitBit;}
+transmitBit;\
+}
 
 
 
@@ -150,6 +125,7 @@ OCR0A +=  Rx_clock;}
 
 /*****************************************/
 #define receive_byte \
+\
 data_byte_Rx = 0;\
 parity_2 = 0;\
 wait_for_start_bit;\
@@ -165,6 +141,7 @@ receiveBit;\
 receiveBit;
 
 
+
 /*****************************************/
 #define break_page_fill \
 \
@@ -172,16 +149,21 @@ Reset_clock;\
 Start_Rx_clock;\
 data_byte_Tx = 0x55;\
 transmit_byte_P;\
-Stop_clock;\
-Timer_T2_sub(T2_delay_750us);\
-output_l;\
-Timer_T2_sub(T2_delay_500us);\
-output_h;\
+Tx_bit = 0;\
+for(int m = 0; m <= 11; m++)transmitBit;\
+Tx_bit = 1;transmitBit;transmitBit;\
 Reset_clock;\
-Start_Tx_clock_LS;\
-data_byte_Tx = 0x55; transmit_byte_LS;\
-data_byte_Tx = (STCS | 0x09); transmit_byte_LS;\
-data_byte_Tx = 0x01; transmit_byte_LS;\
+Start_Tx_clock;\
+data_byte_Tx = 0x55; transmit_byte;\
+data_byte_Tx = (STCS | 0x09); transmit_byte;\
+data_byte_Tx = 0x01; transmit_byte;\
 Stop_clock;
+
+
+
+
+
+
+
 
 
