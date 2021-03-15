@@ -95,6 +95,13 @@ Program_record();}
 
 
 
+cli();UCSR0B &= (~(1<<RXCIE0));									//download complete, disable UART Rx interrupt
+
+while(1){if (isCharavailable(10)==1){sendChar(receiveChar());}
+    else break;}
+
+
+
 newline();															//Add cmd 0x0000 at end of file where record contains an odd number of bytes.
 sendHex(16, odd_line_length);										//Continue filling page_buffer//
 if(odd_line_length%2) {
@@ -107,10 +114,7 @@ Flash_flag = 1;
 if ((add_last_cmd + 1)%PageSZ){orphan = 1;}}
  
 
-cli();UCSR0B &= (~(1<<RXCIE0));									//download complete, disable UART Rx interrupt
-
-while(1){if (isCharavailable(10)==1)receiveChar();
-    else break;}													//Clear last few characters of hex file
+													//Clear last few characters of hex file
 
 newline();
 sendChar(record_type_old + '0');
