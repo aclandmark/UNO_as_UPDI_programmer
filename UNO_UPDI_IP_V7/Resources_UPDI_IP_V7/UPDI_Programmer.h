@@ -203,7 +203,7 @@ setup_watchdog;\
 ADMUX |= (1 << REFS0);\
 initialise_IO;\
 \
-USART_init(0,51);
+USART_init(0,68);
 
 
 
