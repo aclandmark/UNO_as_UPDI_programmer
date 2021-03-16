@@ -12,6 +12,11 @@
 #include <avr/eeprom.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+
+
 
 void USART0_init(void);
 void char_to_PC(char);
@@ -21,7 +26,22 @@ char isCharavailable (int);
 char char_from_PC(void);
 char waitforkeypress(void);
 
+signed char Round_and_Display(char*, char, signed char);
+void reverse(char *, int);
+long longToStr(long , char *, int );
+char ftoaL(float, char *);														//Local version of the float to askii routine
+
+
 void Timer_TCA(char, unsigned int);
+
+
+char Int_array[8], Float_array[12];
+signed char expt;
+	int string_length;
+	long  Int_num;
+	float Float_num, power;
+	char expt_array[4];
+	char power_array[12];
 
 
 #define setup_HW \
