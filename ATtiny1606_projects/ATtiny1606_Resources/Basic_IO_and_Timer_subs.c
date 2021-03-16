@@ -53,37 +53,3 @@ void Timer_TCA(char prescaler, unsigned int top_value){
 	
 	
 	
-/*	
-ISR(TCA0_OVF_vect){
-	string_to_PC("ABCDEabcdefghijklFGHIJKL0123456789ABCDEFG\r\n");
-TCA0.SINGLE.INTFLAGS = TCA_SINGLE_OVF_bm;}*/
-
-
-
-
-/*void Timer_TCA(char prescaler, unsigned int top_value){//WORKS
-	TCA0.SINGLE.CNT = 0x0;
-	TCA0.SINGLE.INTCTRL = TCA_SINGLE_OVF_bm;
-	TCA0.SINGLE.PER = top_value; //52064;	//13016;	//0x0CB6*4;
-	//TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV256_gc
-	//| TCA_SINGLE_ENABLE_bm;
-	TCA0_SINGLE_CTRLA = (prescaler*2) +1;
-	while (!(TCA0_SINGLE_INTFLAGS & 0x01));
-	//string_to_PC("ABCDEabcdefghijklFGHIJKL0123456789\r\n");
-	TCA0.SINGLE.INTFLAGS = TCA_SINGLE_OVF_bm;
-TCA0_SINGLE_CTRLA = 0;}*/
-
-
-	
-/*TCA0.SINGLE.CNT = 0x0;	//0xFFFF - start_value + 1;
-	TCA0_SINGLE_PER = top_value;
-	TCA0_SINGLE_CTRLA = (prescaler*2) +1;
-	while (!(TCA0_SINGLE_INTFLAGS & 0x01));
-	TCA0_SINGLE_INTFLAGS |= 1;
-	TCA0_SINGLE_CTRLA = 0x0;}
-	TCA0.SINGLE.INTCTRL = TCA_SINGLE_OVF_bm;
-	TCA0.SINGLE.CTRLB = TCA_SINGLE_WGMODE_NORMAL_gc;
-	TCA0.SINGLE.EVCTRL &= (~(TCA_SINGLE_CNTEI_bm));
-	TCA0.SINGLE.PER = 0x0CB6;
-	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV256_gc
-	| TCA_SINGLE_ENABLE_bm;}*/	
