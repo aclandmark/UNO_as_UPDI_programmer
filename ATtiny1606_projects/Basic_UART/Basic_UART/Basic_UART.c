@@ -38,7 +38,7 @@ int main(void)
 		case '.':string_to_PC("?\r\n");SW_reset; break;
 		default: SW_reset;}
 		
-		string_to_PC("ABCDEabcdefghijklFGHIJKL01234567891234568ABCDEFGHIJKLMNOPQR\r\n");}
+		string_to_PC("ABCDEabcdefghijklFGHIJKLMNOPQRSTUABCDEabcdefghijklFGHIJKLMNO\r\n");}
 		
 }
 	
