@@ -1,0 +1,70 @@
+
+Text here is ignorred
+********************************************************
+
+
+
+1	UNO AVR Programmer extended to use the UPDI interface
+Necessary for prpgramming the ATtiny806/1606 device
+Programs both hex and text files
+Hex files start at address 0x8000
+Text files start a address 0xB800
+Flash ends at C000-1
+Flash size is 16k
+1234567
+2	UNO AVR Programmer extended to use the UPDI interface
+Necessary for prpgramming the ATtiny806/1606 device
+Programs both hex and text files
+Hex files start at address 0x8000
+Text files start a address 0xB800
+Flash ends at C000-1
+Flash size is 16k
+1234567
+3	UNO AVR Programmer extended to use the UPDI interface
+Necessary for prpgramming the ATtiny806/1606 device
+Programs both hex and text files
+Hex files start at address 0x8000
+Text files start a address 0xB800
+Flash ends at C000-1
+Flash size is 16k
+1234567
+4	UNO AVR Programmer extended to use the UPDI interface
+Necessary for prpgramming the ATtiny806/1606 device
+Programs both hex and text files
+Hex files start at address 0x8000
+Text files start a address 0xB800
+Flash ends at C000-1
+Flash size is 16k
+1234567
+5	UNO AVR Programmer extended to use the UPDI interface
+Necessary for prpgramming the ATtiny806/1606 device
+Programs both hex and text files
+Hex files start at address 0x8000
+Text files start a address 0xB800
+Flash ends at C000-1
+Flash size is 16k
+1234567
+6	UNO AVR Programmer extended to use the UPDI interface
+Necessary for prpgramming the ATtiny806/1606 device
+Programs both hex and text files
+Hex files start at address 0x8000
+Text files start a address 0xB800
+Flash ends at C000-1
+Flash size is 16k
+1234567
+7	UNO AVR Programmer extended to use the UPDI interface
+Necessary for prpgramming the ATtiny806/1606 device
+Programs both hex and text files
+Hex files start at address 0x8000
+Text files start a address 0xB800
+Flash ends at C000-1
+Flash size is 16k
+1234567
+8	UNO AVR Programmer extended to use the UPDI interface
+Necessary for prpgramming the ATtiny806/1606 device
+Programs both hex and text files
+Hex files start at address 0x8000
+Text files start a address 0xB800
+Flash ends at C000-1
+Flash size is 16k
+
