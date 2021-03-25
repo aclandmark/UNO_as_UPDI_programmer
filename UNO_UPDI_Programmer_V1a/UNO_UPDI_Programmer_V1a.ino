@@ -99,7 +99,7 @@ Dissable_UPDI_sesion;}
 ******************so that the operation of the progammer can be tested easily*************************/
 
 
-sendString("\r\nRun trial application? -y- or AOK\r\n");
+sendString("\r\nRun trial application? -y- or AOK (POR may be required)\r\n");
 if(waitforkeypress() == 'y'){
 
 //inter pcb baud rate is 9.6K:  requires delay of 104uS 
