@@ -3,7 +3,7 @@
 void USART0_init(void)
 {PORTB.DIR &= ~PIN3_bm;
 	PORTB.DIR |= PIN2_bm;
-	USART0.BAUD = (uint16_t)USART0_BAUD_RATE(57600);
+	USART0.BAUD = (uint16_t)USART0_BAUD_RATE(9600);
 	USART0.CTRLB |= USART_TXEN_bm;
 USART0.CTRLB |= USART_RXEN_bm;}
 
@@ -40,12 +40,15 @@ char isCharavailable (int m){int n = 0;
 	return 	USART0.RXDATAL;	}
 	
 
+
+void newline(void){string_to_PC("\r\n");}
+
+
 /*****************************************************************/
 void Timer_TCA(char prescaler, unsigned int top_value){
 	TCA0.SINGLE.CNT = 0x0;										//Reset counter
-	//TCA0.SINGLE.INTCTRL = TCA_SINGLE_OVF_bm;
 	TCA0.SINGLE.PER = top_value;								//Set top value
-		TCA0_SINGLE_CTRLA = (prescaler*2) +1;					//Start counter
+	TCA0_SINGLE_CTRLA = (prescaler*2) +1;						//Start counter
 	while (!(TCA0_SINGLE_INTFLAGS & 0x01));						//Wait for it to reach the top value
 	TCA0.SINGLE.INTFLAGS = TCA_SINGLE_OVF_bm;					//Reset OVF flag
 	TCA0_SINGLE_CTRLA = 0;}										//Stop Counter
