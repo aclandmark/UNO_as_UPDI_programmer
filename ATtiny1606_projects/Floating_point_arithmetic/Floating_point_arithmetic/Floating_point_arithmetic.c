@@ -46,7 +46,7 @@ int main(void)
 	
 		
 	if(User_response == 'r'){
-		string_to_PC("\r\nEnter floating point number then power.\r\n");
+		string_to_PC("\r\nEnter floating point number then power then x or AOK\r\n");
 		Float_num = Float_from_KBD(Float_array);										//Acquire FPN
 		if(!(Float_num)){SW_reset;}		
 		power = Float_from_KBD(power_array);											//Plus exponent
