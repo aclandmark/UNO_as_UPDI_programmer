@@ -11,7 +11,7 @@
  (Note: The internal RC clock may also need calibrating but this can usually
  be avoided if several devices are available.)
 
- This Shetch has only been tested with ATtiny 806/1606 both excellent devices for the
+ This Sketch has only been tested with ATtiny 806/1606 both excellent devices for the
  newcommer: They are available in a SOIC package that can be hand soldered and they have 
  hardware I2C and UART modules rather the the USI that is software driven. 
  Test projects have been written for the ATtiny1606 using Atmel Studio 7.
