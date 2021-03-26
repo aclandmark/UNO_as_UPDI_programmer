@@ -7,11 +7,20 @@
 
 signed int PageSZ = 0x20;									//Size of a page of flash in 16 bit words
 signed int PAmask = 0x1FE0;									//Used to obtain the flash page address from the hex address
-unsigned int FlashSZ = 0x2000;								//Amount of flash memory in 16 bit words supplied on target device
 volatile char record_type, record_type_old;
 unsigned char block_SZ = 64;								//page size in bytes
 unsigned int flash_start = 0x8000;							//bytes
+
+/**************Values for ATtiny1606**************************************************/
+unsigned int FlashSZ = 0x2000;								//Amount of flash memory in 16 bit words supplied on target device
 unsigned int text_size = 0x400;								//words
+
+
+/**************Values for ATtiny806**************************************************/
+unsigned int FlashSZ = 0x1000;								//Amount of flash memory in 16 bit words supplied on target device
+unsigned int text_size = 0x200;								//words
+
+
 
 
 
