@@ -12,13 +12,19 @@ unsigned char block_SZ = 64;								//page size in bytes
 unsigned int flash_start = 0x8000;							//bytes
 
 /**************Values for ATtiny1606**************************************************/
-unsigned int FlashSZ = 0x2000;								//Amount of flash memory in 16 bit words supplied on target device
-unsigned int text_size = 0x400;								//words
+unsigned int FlashSZ;										//Amount of flash memory in 16 bit words supplied on target device
+unsigned int text_size;										//Size of data partition in words
 
 
-/**************Values for ATtiny806**************************************************/
-//unsigned int FlashSZ = 0x1000;								//Amount of flash memory in 16 bit words supplied on target device
-//unsigned int text_size = 0x200;								//words
+
+#define set_flash_sz \
+switch (device_type){\
+case 806: FlashSZ = 0x1000; break;\
+case 1606: FlashSZ = 0x2000; break;}
+
+#define data_blocks \
+((FlashSZ*2) - (text_size * 2))/256
+
 
 /*
 Flash can be partitioned into 256 (0x100) byte blocks
@@ -213,7 +219,9 @@ setup_watchdog;\
 ADMUX |= (1 << REFS0);\
 initialise_IO;\
 \
-USART_init(0,68);
+USART_init(0,68);\
+set_flash_sz;\
+text_size = (text_bytes/2);
 
 
 
