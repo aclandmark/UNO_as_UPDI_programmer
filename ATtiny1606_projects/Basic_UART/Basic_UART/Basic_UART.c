@@ -9,8 +9,15 @@
  RxD pin is PB3 pin 8
  TCA 
 */
-void Delay(void);
 
+#define device_type 1606
+#define text_bytes  2048
+
+//#define device_type 806
+//#define text_bytes  1024
+
+
+void Delay(void);
 #include "Basic_UART.h"
 
 int main(void)
