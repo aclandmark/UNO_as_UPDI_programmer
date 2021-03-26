@@ -16,9 +16,11 @@ Both hex and text files can be programmed to flash.  The Attiny 1606 has 16kByte
 
 For demonstration purposes an ATtiny 1606 is permanently connected to a UNO.  Initially the UNO programms the 1606 with sample hex and text files.  The hex  reads the text and performs some simple arithmetic.
 
-The UNO programmer is then replaced with an other sample pprogram.  This communicates with a PC and controls the 1606, sending it numbers and requesting the strings.
+The programmer has a test mode in which it connects the target device UART pins to the UNO USB connector via a low speed link as an aid to debuging use code.
 
-Space allowing the programmer and sample program can be combined before being uploaded as a single program to the UNO.
+As a final step before removing the target from the programming jig the UART speed can be increased to the required value.
+
+When it is clear that development is complete the the reset function can be restored to save using POR to reset the device.
 
 Microchip have made slight changes to the code required to setup the IO lines and the peripherals.  The sample 1606 program includes timer TCA, the watchdog timer and UART with separate Rx and Tx lines, since these are common requirements.
 
