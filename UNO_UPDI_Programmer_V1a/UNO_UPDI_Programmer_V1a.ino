@@ -58,8 +58,11 @@ write_fuse (BODCFG,0x0);                              //Default value: BOD dissa
 write_fuse (OSCCFG, 0x7E);                            //Default value: 20MHz internal clock
 write_fuse (SYSCFG0, 0xF7);                           //UPDI enabled, EEPROM preserved at chip erase
 write_fuse (SYSCFG1, 0xFD);                           //16mS SUT
-write_fuse (APPEND, 0x38);                            //2Kbyte data partition for text
-write_fuse (BOOTEND, 0x0);                            //Default value: No flash partitions
+
+write_fuse (APPEND, 0x38);                            //For Attiny 1606:2Kbyte data partition for text
+//write_fuse (APPEND, 0x1C);                         //For Attiny 806:1Kbyte data partition for text
+
+write_fuse (BOOTEND, 0x0);                            //Default value: No boot partition
 
 
 
