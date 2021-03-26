@@ -1,5 +1,5 @@
 
-Text here is ignorred
+Text here is ignored
 ********************************************************
 
 The UPDI inteface:	Defines the way that many new AVR devices are to be programmered, MISO, MOSI, SCK lines are dispensed with just leaving the reset pin.
@@ -14,7 +14,7 @@ The SOIC footprint is ideal for anyone wishing to migrate to SM designs, (but ma
 
 Both hex and text files can be programmed to flash.  The Attiny 1606 has 16kBytes of flash and two have been reseved for text. This reservation cab be altered or elliminated if necessary.
 
-For demonstration purposes an ATtiny 1606 is permanently connected to a UNO.  Initially the UNO programms the 1606 with sample hex and text files.  The hex  reads the text and performs some simple arithmetic.
+For demonstration purposes an ATtiny 1606 is permanently connected to a UNO.  Initially the UNO programms the 1606 with sample hex and text files.  The hex reads the text or performs some simple arithmetic.
 
 The programmer has a test mode in which it connects the target device UART pins to the UNO USB connector via a low speed link as an aid to debuging use code.
 
@@ -25,8 +25,3 @@ When it is clear that development is complete the the reset function can be rest
 Microchip have made slight changes to the code required to setup the IO lines and the peripherals.  The sample 1606 program includes timer TCA, the watchdog timer and UART with separate Rx and Tx lines, since these are common requirements.
 
 Text strings are identified as either number 1,2,3,4...... and subroutines required to read them are also provided.
- 
-
-
-
-
