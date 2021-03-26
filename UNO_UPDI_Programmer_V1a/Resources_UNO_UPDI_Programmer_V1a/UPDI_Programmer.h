@@ -17,8 +17,8 @@ unsigned int text_size = 0x400;								//words
 
 
 /**************Values for ATtiny806**************************************************/
-unsigned int FlashSZ = 0x1000;								//Amount of flash memory in 16 bit words supplied on target device
-unsigned int text_size = 0x200;								//words
+//unsigned int FlashSZ = 0x1000;								//Amount of flash memory in 16 bit words supplied on target device
+//unsigned int text_size = 0x200;								//words
 
 
 
