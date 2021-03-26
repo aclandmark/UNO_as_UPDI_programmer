@@ -16,6 +16,13 @@
 #include <stdlib.h>
 
 
+
+#define set_flash_sz \
+switch (device_type){\
+	case 806: FlashSZ = 0x1000; break;\
+case 1606: FlashSZ = 0x2000; break;}
+
+
 unsigned int FlashSZ = 0x2000;											//Size of ATtiny 1606 flash in 16 bit words
 unsigned int flash_start = 0x8000;										//Program start address in 8 bit bytes
 unsigned int text_size = 0x400;											//Text size in 16 bit words (800 chars)
@@ -65,7 +72,8 @@ volatile char * txt_ptr;
 
 
 #define setup_HW \
-USART0_init();
+USART0_init();\
+set_flash_sz;
 
 #define SW_reset \
 CCP = 0xD8;WDT.CTRLA = 0x03; while(1);
