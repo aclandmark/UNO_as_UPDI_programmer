@@ -21,7 +21,7 @@ int  text_num;														//The number of the string to be printed out
 setup_HW;
 User_prompt;
 
-text_start_address = flash_start + ((FlashSZ*2) - text_size);
+text_start_address = flash_start + ((FlashSZ*2) - text_bytes);
 txt_ptr = (char*)text_start_address;
 char_counter = 0;													//counts the number of characters in the text file (excludes \r & \n)
 
