@@ -21,6 +21,13 @@ Studio 7 equally invaluable when attempting to build projects in the easiest and
 Programmers note pad is also highly recommended for viewing C-files that Arduino can't open easily.  
  */
 
+#define device_type 1606
+#define text_bytes  2048
+
+//#define device_type 806
+//#define text_bytes  1024
+//text bytes must be a multiple of 256
+
 
 
 #include "Resources_UNO_UPDI_Programmer_V1a.h"
@@ -58,10 +65,7 @@ write_fuse (BODCFG,0x0);                              //Default value: BOD dissa
 write_fuse (OSCCFG, 0x7E);                            //Default value: 20MHz internal clock
 write_fuse (SYSCFG0, 0xF7);                           //UPDI enabled, EEPROM preserved at chip erase
 write_fuse (SYSCFG1, 0xFD);                           //16mS SUT
-
-write_fuse (APPEND, 0x38);                            //For Attiny 1606:2Kbyte data partition for text
-//write_fuse (APPEND, 0x1C);                          //For Attiny 806:1Kbyte data partition for text
-
+write_fuse (APPEND, data_blocks);                      //For Attiny 1606:2Kbyte data partition for text
 write_fuse (BOOTEND, 0x0);                            //Default value: No boot partition
 
 
