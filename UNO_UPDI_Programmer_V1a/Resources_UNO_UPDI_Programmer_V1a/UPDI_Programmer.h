@@ -263,7 +263,7 @@ PORTB = 0xFF;\
 PORTC = 0xFE;\
 PORTD = 0xFF;
 
-//PORTC0 stays as Hi Z inputput
+//PORTC0 stays as Hi Z input
 
 
 
