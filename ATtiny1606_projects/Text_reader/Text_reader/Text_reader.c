@@ -3,6 +3,11 @@
 Introduces subroutines necessary to read text from Flash
 that has been programmed using the "UNO_UPDI_programmer".
 */
+//#define device_type 1606
+//#define text_bytes  2048
+
+#define device_type 806
+#define text_bytes  1024
 
 
 #include "Text_reader.h"
@@ -16,7 +21,7 @@ int  text_num;														//The number of the string to be printed out
 setup_HW;
 User_prompt;
 
-text_start_address = flash_start + ((FlashSZ - text_size)*2);
+text_start_address = flash_start + ((FlashSZ*2) - text_size);
 txt_ptr = (char*)text_start_address;
 char_counter = 0;													//counts the number of characters in the text file (excludes \r & \n)
 
