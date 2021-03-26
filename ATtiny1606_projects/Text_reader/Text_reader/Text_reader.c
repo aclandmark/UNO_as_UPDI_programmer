@@ -3,11 +3,11 @@
 Introduces subroutines necessary to read text from Flash
 that has been programmed using the "UNO_UPDI_programmer".
 */
-//#define device_type 1606
-//#define text_bytes  2048
+#define device_type 1606
+#define text_bytes  2048
 
-#define device_type 806
-#define text_bytes  1024
+//#define device_type 806
+//#define text_bytes  1024
 
 
 #include "Text_reader.h"
