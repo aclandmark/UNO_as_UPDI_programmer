@@ -60,7 +60,7 @@ write_fuse (SYSCFG0, 0xF7);                           //UPDI enabled, EEPROM pre
 write_fuse (SYSCFG1, 0xFD);                           //16mS SUT
 
 write_fuse (APPEND, 0x38);                            //For Attiny 1606:2Kbyte data partition for text
-//write_fuse (APPEND, 0x1C);                         //For Attiny 806:1Kbyte data partition for text
+//write_fuse (APPEND, 0x1C);                          //For Attiny 806:1Kbyte data partition for text
 
 write_fuse (BOOTEND, 0x0);                            //Default value: No boot partition
 
