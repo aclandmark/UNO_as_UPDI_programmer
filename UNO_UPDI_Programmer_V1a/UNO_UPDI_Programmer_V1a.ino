@@ -20,13 +20,15 @@ Note:  It is hoped that any newcommer persuing this project will find both Ardui
 Studio 7 equally invaluable when attempting to build projects in the easiest and most flexible way.
 Programmers note pad is also highly recommended for viewing C-files that Arduino can't open easily.  
  */
-
+ 
+//Select device type and text size here
+//text bytes must be a multiple of 256 characters
 #define device_type 1606
 #define text_bytes  2048
 
 //#define device_type 806
 //#define text_bytes  1024
-//text bytes must be a multiple of 256
+
 
 
 
