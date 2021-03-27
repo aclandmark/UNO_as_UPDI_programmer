@@ -14,6 +14,12 @@ long product_AB(long, long);
 long divide_A_by_B(long, long);
 long A_modulo_B(long, long);
 
+#define device_type 1606
+#define text_bytes  2048
+
+//#define device_type 806
+//#define text_bytes  1024
+
 
 
 
